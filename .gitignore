@@ -41,3 +41,12 @@ app-example
 # generated native folders
 /ios
 /android
+
+# cursor
+.cursor
+
+# expo
+.expo
+
+# vscode
+.vscode
