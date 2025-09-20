@@ -93,21 +93,21 @@ export default function Verification() {
     }
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className='flex-1 bg-black'>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className='flex-1 bg-background'>
             <View className='px-4 pt-16 flex-1'>
                 <View className='flex-row items-center'>
                     <Pressable onPress={() => router.back()} className='p-2 -ml-2' accessibilityLabel='Go back'>
-                        <Ionicons name='chevron-back' size={24} color={'#FFFFFF'} />
+                        <Ionicons name='chevron-back' size={24} color='#FFFFFF' />
                     </Pressable>
                     <View className='flex-1 items-center -ml-6'>
-                        <Text className='text-white text-base font-semibold'>Verification Code</Text>
+                        <Text className='text-text-primary text-base font-semibold'>Verification Code</Text>
                     </View>
                     <View style={{ width: 24 }} />
                 </View>
 
                 <View className='mt-6'>
-                    <Text className='text-white text-base font-semibold'>Enter the Verification Code.</Text>
-                    <Text className='text-white/60 text-xs mt-1'>We have sent a verification code to your email.</Text>
+                    <Text className='text-text-primary text-base font-semibold'>Enter the Verification Code.</Text>
+                    <Text className='text-text-secondary text-xs mt-1'>We have sent a verification code to your email.</Text>
                 </View>
 
                 <View className='flex-row justify-between mt-6'>
@@ -121,8 +121,8 @@ export default function Verification() {
                                 keyboardType='number-pad'
                                 maxLength={1}
                                 placeholder=''
-                                placeholderTextColor={'#7A7A7A'}
-                                className='text-white text-2xl text-center w-full h-full'
+                                placeholderTextColor='#7A7A7A'
+                                className='text-text-primary text-2xl text-center w-full h-full'
                             />
                         </View>
                     ))}
@@ -131,16 +131,16 @@ export default function Verification() {
                 <Pressable
                     disabled={submitting}
                     onPress={verify}
-                    className='mt-6 bg-blue-600 py-4 rounded-xl items-center'
+                    className='mt-6 bg-accent-blue-600 py-4 rounded-xl items-center'
                     accessibilityLabel='Continue'
                 >
-                    <Text className='text-white font-semibold'>Continue</Text>
+                    <Text className='text-text-primary font-semibold'>Continue</Text>
                 </Pressable>
 
                 <View className='mt-4 flex-row'>
-                    <Text className='text-white/80 text-sm'>If you didn&apos;t receive the code?</Text>
+                    <Text className='text-text-secondary text-sm'>If you didn&apos;t receive the code?</Text>
                     <Pressable disabled={resending} onPress={resend} className='ml-1'>
-                        <Text className='text-blue-400 text-sm'>Resend</Text>
+                        <Text className='text-accent-blue-400 text-sm'>Resend</Text>
                     </Pressable>
                 </View>
             </View>

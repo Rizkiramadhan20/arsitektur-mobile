@@ -53,18 +53,18 @@ export default function AuthIndexScreen() {
 
             {/* Bottom content */}
             <View className='absolute left-6 right-6 bottom-14'>
-                <Text className='text-white text-4xl font-bold leading-tight w-4/5'>
+                <Text className='text-text-primary text-4xl font-bold leading-tight w-4/5'>
                     {current.title}
                 </Text>
                 <View className='mt-3'>
-                    <Text className='text-white/80 text-base'>{current.subtitle}</Text>
+                    <Text className='text-text-secondary text-base'>{current.subtitle}</Text>
                     {isLastSlide ? (
                         <Pressable
                             accessibilityLabel='Get Started'
                             onPress={handleNext}
-                            className='mt-5 bg-blue-600 py-4 rounded-xl items-center'
+                            className='mt-5 bg-accent-blue-600 py-4 rounded-xl items-center'
                         >
-                            <Text className='text-white font-semibold'>Get Started</Text>
+                            <Text className='text-text-primary font-semibold'>Get Started</Text>
                         </Pressable>
                     ) : (
                         <View className='mt-3 flex-row items-center justify-between'>
@@ -74,7 +74,7 @@ export default function AuthIndexScreen() {
                                 onPress={handleNext}
                                 className='w-10 h-10 rounded-full border border-white/80 items-center justify-center'
                             >
-                                <Text className='text-white text-xl'>{'>'}</Text>
+                                <Text className='text-text-primary text-xl'>{'>'}</Text>
                             </Pressable>
                         </View>
                     )}

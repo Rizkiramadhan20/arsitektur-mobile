@@ -4,13 +4,17 @@ import React from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 
-import { colors } from '@/config/colors/colors';
-
 export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: colors.primary,
+                tabBarActiveTintColor: '#3b82f6',
+                tabBarInactiveTintColor: '#a1a1aa',
+                tabBarStyle: {
+                    backgroundColor: '#18181b',
+                    borderTopColor: '#27272a',
+                    borderTopWidth: 1,
+                },
                 headerShown: false,
             }}>
             <Tabs.Screen

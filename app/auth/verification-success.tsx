@@ -8,17 +8,17 @@ import { router } from 'expo-router'
 
 export default function VerificationSuccess() {
     return (
-        <View className='flex-1 bg-black items-center justify-center px-8'>
-            <Ionicons name='checkmark-circle' size={72} color={'#22C55E'} />
-            <Text className='text-white text-2xl font-semibold mt-4'>Verified!</Text>
-            <Text className='text-white/70 text-center mt-2'>Your account has been verified successfully.</Text>
+        <View className='flex-1 bg-background items-center justify-center px-8'>
+            <Ionicons name='checkmark-circle' size={72} color='#22C55E' />
+            <Text className='text-text-primary text-2xl font-semibold mt-4'>Verified!</Text>
+            <Text className='text-text-secondary text-center mt-2'>Your account has been verified successfully.</Text>
 
             <Pressable
                 onPress={() => router.replace('/(tabs)/properties')}
-                className='mt-8 bg-blue-600 py-4 px-6 rounded-xl items-center'
+                className='mt-8 bg-accent-blue-600 py-4 px-6 rounded-xl items-center'
                 accessibilityLabel='Go to Properties'
             >
-                <Text className='text-white font-semibold'>Continue</Text>
+                <Text className='text-text-primary font-semibold'>Continue</Text>
             </Pressable>
         </View>
     )
