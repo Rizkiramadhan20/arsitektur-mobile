@@ -8,6 +8,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import { fetchProperties } from '@/config/lib/FetchProperties'
 
+import { useRouter } from 'expo-router';
+
+import { useUserLocation } from '@/hooks/useUserLocation';
+
 export default function Index() {
     const [properties, setProperties] = useState<Property[]>([])
     const [filteredProperties, setFilteredProperties] = useState<Property[]>([])
@@ -15,6 +19,26 @@ export default function Index() {
     const [error, setError] = useState<string | null>(null)
     const [activeChip, setActiveChip] = useState('Recommended')
     const [searchQuery, setSearchQuery] = useState('')
+
+    const router = useRouter();
+    const { userLocation, provinceSlug, hasLocationPermission, loading: locationLoading, error: locationError, retry } = useUserLocation();
+
+    const handleViewAllNearYou = () => {
+        console.log('handleViewAllNearYou called');
+        console.log('hasLocationPermission:', hasLocationPermission);
+        console.log('userLocation:', userLocation);
+        console.log('provinceSlug:', provinceSlug);
+
+        if (hasLocationPermission && userLocation) {
+            console.log('Navigating to user province:', provinceSlug);
+            // Navigate to province page based on user location
+            router.push(`/properties/province/${provinceSlug}`);
+        } else {
+            console.log('Fallback to Jakarta');
+            // Fallback to default province (Jakarta) if location not available
+            router.push('/properties/province/dki-jakarta');
+        }
+    };
 
     useEffect(() => {
         const loadProperties = async () => {
@@ -228,6 +252,25 @@ export default function Index() {
                     ))}
                 </ScrollView>
 
+                {/* Debug Info */}
+                <View className='mt-6 p-4 bg-zinc-800/50 rounded-xl border border-zinc-700'>
+                    <Text className='text-white font-bold mb-2'>Debug Info:</Text>
+                    <Text className='text-zinc-400 text-sm'>Permission: {hasLocationPermission ? 'Granted' : 'Denied'}</Text>
+                    <Text className='text-zinc-400 text-sm'>Loading: {locationLoading ? 'Yes' : 'No'}</Text>
+                    <Text className='text-zinc-400 text-sm'>Error: {locationError || 'None'}</Text>
+                    <Text className='text-zinc-400 text-sm'>Location: {userLocation ? `${userLocation.province} (${userLocation.latitude}, ${userLocation.longitude})` : 'None'}</Text>
+                    <Text className='text-zinc-400 text-sm'>Province Slug: {provinceSlug}</Text>
+
+                    {locationError && (
+                        <TouchableOpacity
+                            onPress={retry}
+                            className='mt-3 bg-accent-blue-500 px-4 py-2 rounded-lg'
+                        >
+                            <Text className='text-white font-semibold text-center'>Retry Location</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+
                 {/* Near You */}
                 <View className='mt-6'>
                     {/* Section Header */}
@@ -236,11 +279,16 @@ export default function Index() {
                             <View className='w-1 h-6 bg-gradient-to-b from-accent-blue-500 to-accent-blue-600 rounded-full' />
                             <View>
                                 <Text className='text-white text-xl font-bold'>Dekat Anda</Text>
-                                <Text className='text-zinc-400 text-sm'>Properti di area Anda</Text>
+                                <Text className='text-zinc-400 text-sm'>
+                                    {userLocation ? `Properti di ${userLocation.province}` : 'Properti di area Anda'}
+                                </Text>
                             </View>
                         </View>
 
-                        <TouchableOpacity className='flex-row items-center bg-zinc-800/50 px-4 py-2 rounded-xl border border-zinc-700'>
+                        <TouchableOpacity
+                            onPress={handleViewAllNearYou}
+                            className='flex-row items-center bg-zinc-800/50 px-4 py-2 rounded-xl border border-zinc-700'
+                        >
                             <Text className='text-accent-blue-500 font-medium mr-1'>Lihat Semua</Text>
                             <Text className='text-accent-blue-500'>→</Text>
                         </TouchableOpacity>

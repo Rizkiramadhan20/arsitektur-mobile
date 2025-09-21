@@ -31,6 +31,7 @@ export default function RootLayout() {
               <Stack.Screen name="index" />
               <Stack.Screen name="permissions" />
               <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="properties" />
               <Stack.Screen name="+not-found" />
             </Stack>
             <Toast />

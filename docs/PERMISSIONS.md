@@ -88,6 +88,19 @@ Untuk test permission flow:
 - Jika notifications tidak tersedia, status akan menjadi `null`
 - `allPermissionsGranted` akan tetap `true` meskipun notifications tidak tersedia
 
+### Implementasi Notifikasi Baru:
+
+- **Local Notifications**: Berfungsi di Expo Go untuk notifikasi dalam aplikasi
+- **Push Notifications**: Hanya berfungsi di development build, tidak di Expo Go
+- **Notification Utils**: Utility functions untuk mengelola notifikasi dengan aman
+- **useNotifications Hook**: Hook untuk mengelola state notifikasi dengan mudah
+
+### Referensi:
+
+- [Expo Notifications Documentation](https://docs.expo.dev/versions/latest/sdk/notifications/)
+- Push notifications tidak didukung di Expo Go SDK 53+
+- Local notifications tetap berfungsi di Expo Go
+
 ## Dependencies
 
 - `expo-camera`: Untuk akses kamera

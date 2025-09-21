@@ -2,14 +2,11 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useCameraPermissions } from 'expo-camera';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-let Notifications: any = null;
-try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    Notifications = require('expo-notifications');
-} catch {
-    console.log('Notifications not available in Expo Go');
-}
+import {
+    getNotificationPermissions,
+    requestNotificationPermissions,
+    isNotificationsAvailable
+} from '@/utils/notificationUtils';
 
 interface PermissionContextType {
     cameraPermission: boolean | null;
@@ -48,12 +45,13 @@ export const PermissionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
             // Check location permission
             const locationStatus = await Location.getForegroundPermissionsAsync();
+            console.log('Location permission status:', locationStatus);
             setLocationPermission(locationStatus.granted);
 
             // Check notification permission (only if available)
-            if (Notifications) {
-                const notificationStatus = await Notifications.getPermissionsAsync();
-                setNotificationPermission(notificationStatus.granted);
+            if (isNotificationsAvailable()) {
+                const notificationStatus = await getNotificationPermissions();
+                setNotificationPermission(notificationStatus?.granted || false);
             } else {
                 setNotificationPermission(null); // Not available in Expo Go
             }
@@ -76,12 +74,13 @@ export const PermissionProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
             // Request location permission
             const locationResult = await Location.requestForegroundPermissionsAsync();
+            console.log('Location permission request result:', locationResult);
             setLocationPermission(locationResult.granted);
 
             // Request notification permission (only if available)
-            if (Notifications) {
-                const notificationResult = await Notifications.requestPermissionsAsync();
-                setNotificationPermission(notificationResult.granted);
+            if (isNotificationsAvailable()) {
+                const notificationResult = await requestNotificationPermissions();
+                setNotificationPermission(notificationResult?.granted || false);
             } else {
                 setNotificationPermission(null); // Not available in Expo Go
             }
