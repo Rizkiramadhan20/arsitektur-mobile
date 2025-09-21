@@ -13,6 +13,7 @@ import "@/global.css";
 import Toast from 'react-native-toast-message';
 
 import { AuthProvider } from '@/context/AuthContext';
+import { PermissionProvider } from '@/context/PermissionContext';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -24,15 +25,18 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <Toast />
-          <StatusBar style="auto" />
-        </ThemeProvider>
+        <PermissionProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="permissions" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <Toast />
+            <StatusBar style="auto" />
+          </ThemeProvider>
+        </PermissionProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

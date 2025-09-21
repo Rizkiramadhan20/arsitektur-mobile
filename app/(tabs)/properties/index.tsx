@@ -34,11 +34,9 @@ export default function Index() {
         loadProperties()
     }, [])
 
-    // Filter properties based on active chip and search query
     useEffect(() => {
         let filtered = [...properties]
 
-        // Apply search filter
         if (searchQuery.trim()) {
             filtered = filtered.filter(property =>
                 property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -48,7 +46,6 @@ export default function Index() {
             )
         }
 
-        // Apply chip filter
         switch (activeChip) {
             case 'Top Rated':
                 // Sort by a mock rating system (you can implement real rating later)
