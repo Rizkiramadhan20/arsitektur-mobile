@@ -60,6 +60,7 @@ interface PropertyAuthor {
     photoURL: string;
     uid: string;
     role: string;
+    phone?: string;
 }
 
 interface PropertyDetail {
