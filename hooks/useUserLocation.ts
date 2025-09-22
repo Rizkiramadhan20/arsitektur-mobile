@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getUserLocation, getProvinceSlug, UserLocation } from '@/utils/locationUtils';
+
+import { getUserLocation, getProvinceSlug, UserLocation } from '@/hooks/locationUtils'
+
 import { usePermissions } from '@/context/PermissionContext';
 
 export function useUserLocation() {
@@ -9,10 +11,8 @@ export function useUserLocation() {
     const { locationPermission } = usePermissions();
 
     const fetchUserLocation = useCallback(async () => {
-        console.log('fetchUserLocation called, permission:', locationPermission);
 
         if (locationPermission !== true) {
-            console.log('Location permission not granted, setting error');
             setError('Location permission not granted');
             setUserLocation(null);
             return;
@@ -21,9 +21,7 @@ export function useUserLocation() {
         try {
             setLoading(true);
             setError(null);
-            console.log('Getting user location...');
             const location = await getUserLocation();
-            console.log('Location result:', location);
 
             if (location) {
                 setUserLocation(location);
@@ -33,7 +31,6 @@ export function useUserLocation() {
                 setUserLocation(null);
             }
         } catch (err) {
-            console.error('Error in fetchUserLocation:', err);
             setError(err instanceof Error ? err.message : 'Failed to get location');
             setUserLocation(null);
         } finally {
@@ -53,7 +50,6 @@ export function useUserLocation() {
     };
 
     const retryLocation = useCallback(() => {
-        console.log('Retrying location detection...');
         fetchUserLocation();
     }, [fetchUserLocation]);
 

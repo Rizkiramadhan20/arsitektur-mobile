@@ -14,7 +14,6 @@ const PermissionStatus = () => {
     const {
         cameraPermission,
         locationPermission,
-        notificationPermission,
         requestPermissions
     } = usePermissions();
 
@@ -25,7 +24,7 @@ const PermissionStatus = () => {
     const handleRequestPermissions = () => {
         Alert.alert(
             'Izin Diperlukan',
-            'Untuk menggunakan fitur lengkap aplikasi, izinkan akses kamera, lokasi, dan notifikasi.',
+            'Untuk menggunakan fitur lengkap aplikasi, izinkan akses kamera dan lokasi.',
             [
                 { text: 'Batal', style: 'cancel' },
                 { text: 'Buka Pengaturan', onPress: openAppSettings },
@@ -42,9 +41,8 @@ const PermissionStatus = () => {
 
     const cameraStatus = getPermissionStatus(cameraPermission);
     const locationStatus = getPermissionStatus(locationPermission);
-    const notificationStatus = getPermissionStatus(notificationPermission);
 
-    const allGranted = cameraPermission && locationPermission && notificationPermission;
+    const allGranted = cameraPermission && locationPermission;
 
     return (
         <View style={styles.container}>
@@ -94,23 +92,6 @@ const PermissionStatus = () => {
                     </View>
                 </View>
 
-                <View style={styles.permissionItem}>
-                    <View style={styles.permissionInfo}>
-                        <Ionicons name="notifications" size={20} color="#F59E0B" />
-                        <Text style={styles.permissionName}>Notifikasi</Text>
-                    </View>
-                    <View style={styles.statusContainer}>
-                        <Ionicons
-                            name={notificationStatus.icon as any}
-                            size={20}
-                            color={notificationStatus.color}
-                        />
-                        <Text style={[styles.statusText, { color: notificationStatus.color }]}>
-                            {notificationStatus.status === 'granted' ? 'Diizinkan' :
-                                notificationStatus.status === 'denied' ? 'Ditolak' : 'Tidak Diketahui'}
-                        </Text>
-                    </View>
-                </View>
             </View>
 
             {!allGranted && (

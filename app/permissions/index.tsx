@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     View,
     Text,
@@ -11,17 +11,39 @@ import {
 import { usePermissions } from '@/context/PermissionContext';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PermissionScreen = () => {
     const { requestPermissions, loading } = usePermissions();
+    const hasRedirected = useRef(false);
+
+    useEffect(() => {
+        const checkPermissionVisit = async () => {
+            try {
+                const hasVisitedPermissions = await AsyncStorage.getItem('has_visited_permissions');
+                if (hasVisitedPermissions === 'true' && !hasRedirected.current) {
+                    hasRedirected.current = true;
+                    // If user has already visited permissions before, go back to auth
+                    router.replace('/auth');
+                }
+            } catch {
+            }
+        };
+
+        checkPermissionVisit();
+    }, []);
 
     const handleGrantPermissions = async () => {
         await requestPermissions();
+        // Mark that user has visited permissions page
+        await AsyncStorage.setItem('has_visited_permissions', 'true');
         // Navigate to main app after permissions are granted
         router.replace('/(tabs)/properties');
     };
 
     const handleSkip = () => {
+        // Mark that user has visited permissions page
+        AsyncStorage.setItem('has_visited_permissions', 'true');
         // Navigate to main app even if permissions are not granted
         router.replace('/(tabs)/properties');
     };

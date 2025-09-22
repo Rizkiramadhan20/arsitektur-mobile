@@ -27,7 +27,13 @@ export default function RootLayout() {
       <AuthProvider>
         <PermissionProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                animation: 'slide_from_right',
+                animationDuration: 300
+              }}
+            >
               <Stack.Screen name="index" />
               <Stack.Screen name="permissions" />
               <Stack.Screen name="(tabs)" />

@@ -1,8 +1,4 @@
-interface PropertyFacility {
-    imageUrl: string;
-    title: string;
-}
-
+//================== Property ==================//
 interface Property {
     id: string;
     title: string;
@@ -14,6 +10,11 @@ interface Property {
     facilities: PropertyFacility[];
     statusProject: string;
     createdAt: string;
+}
+
+interface PropertyFacility {
+    imageUrl: string;
+    title: string;
 }
 
 interface Pagination {
@@ -31,3 +32,25 @@ interface PropertiesResponse {
     data: Property[];
     pagination: Pagination;
 }
+
+//================== Property By Type ==================//
+interface PropertyByTypeResponse {
+    statusCode: number;
+    statusMessage: string;
+    message: string;
+    ok: boolean;
+    data: Property[];
+    pagination: Pagination;
+}
+
+//================== Property By Province ==================//
+interface PropertiesByProvinceResponse {
+    statusCode: number;
+    statusMessage: string;
+    message: string;
+    ok: boolean;
+    data: Property[];
+    pagination: Pagination;
+}
+
+//================== Property By Details ==================//

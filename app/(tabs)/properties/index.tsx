@@ -1,16 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native'
+import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
-import { SafeAreaView } from 'react-native-safe-area-context'
+import PropertiesNotfound from "@/components/properties/properties/PropertiesNotfound"
 
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { fetchProperties } from '@/config/lib/FetchProperties'
 
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 import { useUserLocation } from '@/hooks/useUserLocation';
+
+import { MotiView } from 'moti'
+
+import ProperstiesSkelaton from "@/components/properties/properties/ProperstiesSkelaton"
+
+import Toast from 'react-native-toast-message';
 
 export default function Index() {
     const [properties, setProperties] = useState<Property[]>([])
@@ -21,22 +27,21 @@ export default function Index() {
     const [searchQuery, setSearchQuery] = useState('')
 
     const router = useRouter();
-    const { userLocation, provinceSlug, hasLocationPermission, loading: locationLoading, error: locationError, retry } = useUserLocation();
+    const { userLocation, provinceSlug, hasLocationPermission } = useUserLocation();
 
     const handleViewAllNearYou = () => {
-        console.log('handleViewAllNearYou called');
-        console.log('hasLocationPermission:', hasLocationPermission);
-        console.log('userLocation:', userLocation);
-        console.log('provinceSlug:', provinceSlug);
 
         if (hasLocationPermission && userLocation) {
-            console.log('Navigating to user province:', provinceSlug);
-            // Navigate to province page based on user location
             router.push(`/properties/province/${provinceSlug}`);
         } else {
-            console.log('Fallback to Jakarta');
-            // Fallback to default province (Jakarta) if location not available
-            router.push('/properties/province/dki-jakarta');
+            Toast.show({
+                type: 'warning',
+                text1: 'Aktifkan lokasi',
+                text2: 'Aktifkan lokasi untuk melihat properti di sekitar Anda',
+                visibilityTime: 4000,
+                autoHide: true,
+                topOffset: 50
+            });
         }
     };
 
@@ -45,7 +50,7 @@ export default function Index() {
             try {
                 setLoading(true)
                 setError(null)
-                const response = await fetchProperties()
+                const response = await fetchProperties(1)
                 setProperties(response.data)
                 setFilteredProperties(response.data)
             } catch (err) {
@@ -61,22 +66,11 @@ export default function Index() {
     useEffect(() => {
         let filtered = [...properties]
 
-        if (searchQuery.trim()) {
-            filtered = filtered.filter(property =>
-                property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                property.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                property.province.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                property.type.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-        }
-
         switch (activeChip) {
             case 'Top Rated':
-                // Sort by a mock rating system (you can implement real rating later)
                 filtered = filtered.sort((a, b) => b.title.length - a.title.length)
                 break
             case 'Most Viewed':
-                // Sort by creation date (newest first as a proxy for most viewed)
                 filtered = filtered.sort((a, b) =>
                     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                 )
@@ -87,7 +81,7 @@ export default function Index() {
         }
 
         setFilteredProperties(filtered)
-    }, [properties, activeChip, searchQuery])
+    }, [properties, activeChip])
 
     const handleChipPress = (chipLabel: string) => {
         setActiveChip(chipLabel)
@@ -97,293 +91,439 @@ export default function Index() {
         setSearchQuery(text)
     }
 
+    useFocusEffect(
+        useCallback(() => {
+            setSearchQuery('')
+        }, [])
+    )
+
     if (loading) {
         return (
-            <SafeAreaView className='flex-1 bg-background items-center justify-center'>
-                <ActivityIndicator size="large" color="#3b82f6" />
-                <Text className='text-white mt-4'>Loading properties...</Text>
-            </SafeAreaView>
+            <ProperstiesSkelaton />
         )
     }
 
     if (error) {
         return (
-            <SafeAreaView className='flex-1 bg-background items-center justify-center px-4'>
-                <Text className='text-status-error text-center mb-4'>Error: {error}</Text>
-                <TouchableOpacity
-                    className='px-6 py-3 rounded-xl bg-accent-blue-600'
-                    onPress={() => {
-                        setError(null)
-                        setLoading(true)
-                        // Retry loading
-                        const loadProperties = async () => {
-                            try {
-                                const response = await fetchProperties()
-                                setProperties(response.data)
-                            } catch (err) {
-                                setError(err instanceof Error ? err.message : 'Failed to load properties')
-                            } finally {
-                                setLoading(false)
-                            }
-                        }
-                        loadProperties()
-                    }}
-                >
-                    <Text className='text-white font-semibold'>Retry</Text>
-                </TouchableOpacity>
-            </SafeAreaView>
+            <PropertiesNotfound />
         )
     }
 
     return (
         <ScrollView className='flex-1' showsVerticalScrollIndicator={true}>
-            <View className='px-4 pt-2 pb-6'>
+            <View className='pt-2 pb-6'>
                 {/* Header */}
-                <View className='flex-row items-center justify-between mt-2'>
-                    <View>
-                        <Text className='text-zinc-400'>Let&apos;s Find your</Text>
-                        <Text className='text-white text-2xl font-semibold'>Favorite Home</Text>
-                    </View>
-                    <TouchableOpacity className='h-10 w-10 rounded-full overflow-hidden border border-zinc-700'>
-                        <Image source={require('../../../assets/images/react-logo.png')} className='h-full w-full' resizeMode='cover' />
-                    </TouchableOpacity>
-                </View>
-
-                {/* Search */}
-                <View className='mt-4 bg-zinc-900 rounded-2xl px-4 py-3 border border-zinc-800'>
-                    <View className='flex-row items-center'>
-                        <View className='h-9 w-9 rounded-xl bg-zinc-800 items-center justify-center mr-3'>
-                            <Text className='text-zinc-400'>🔍</Text>
+                <MotiView
+                    from={{ opacity: 0, translateY: -20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'timing', duration: 600 }}
+                    className='px-2'
+                >
+                    <View className='flex-row items-center justify-between mt-2'>
+                        <View>
+                            <Text className='text-zinc-400'>Let&apos;s Find your</Text>
+                            <Text className='text-white text-2xl font-semibold'>Favorite Home</Text>
                         </View>
-                        <TextInput
-                            placeholder='Search by Address, City, or ZIP'
-                            placeholderTextColor="#6b7280"
-                            className='flex-1 text-white'
-                            value={searchQuery}
-                            onChangeText={handleSearchChange}
-                        />
-                        <TouchableOpacity className='h-10 w-10 rounded-xl bg-accent-blue-600 items-center justify-center ml-3'>
-                            <Text className='text-white'>⚙️</Text>
+                        <TouchableOpacity className='h-10 w-10 rounded-full overflow-hidden border border-zinc-700'>
+                            <Image source={require('../../../assets/images/react-logo.png')} className='h-full w-full' resizeMode='cover' />
                         </TouchableOpacity>
                     </View>
-                </View>
+                </MotiView>
+
+                {/* Search */}
+                <MotiView
+                    from={{ opacity: 0, translateY: 20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'timing', duration: 600, delay: 500 }}
+                    className='px-2 '
+                >
+                    <View className='mt-4 bg-zinc-900 rounded-2xl px-4 py-3 border border-zinc-800'>
+                        <View className='flex-row items-center'>
+                            <View className='h-9 w-9 rounded-xl bg-zinc-800 items-center justify-center mr-3'>
+                                <Text className='text-zinc-400'>🔍</Text>
+                            </View>
+                            <TextInput
+                                placeholder='Search by Address, City, or ZIP'
+                                placeholderTextColor="#6b7280"
+                                className='flex-1 text-white'
+                                value={searchQuery}
+                                onChangeText={handleSearchChange}
+                                onSubmitEditing={() => {
+                                    if (searchQuery.trim()) {
+                                        router.push(`/properties/search?q=${encodeURIComponent(searchQuery)}`)
+                                    }
+                                }}
+                                returnKeyType="search"
+                            />
+                            <TouchableOpacity className='h-10 w-10 rounded-xl bg-accent-blue-600 items-center justify-center ml-3'>
+                                <Text className='text-white'>⚙️</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </MotiView>
 
                 {/* Banner */}
-                <View className='mt-4 rounded-2xl p-6 relative overflow-hidden' style={{ backgroundColor: '#2563eb' }}>
-                    <LinearGradient
-                        colors={['#2563eb', '#3b82f6']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 16 }}
-                    />
-                    {/* Background Pattern */}
-                    <View className='absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16' />
-                    <View className='absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12' />
+                <MotiView
+                    from={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: 'timing', duration: 600, delay: 500 }}
+                    className='px-2 mt-5'
+                >
+                    <View className='rounded-2xl p-6 relative overflow-hidden' style={{ backgroundColor: '#2563eb' }}>
+                        <LinearGradient
+                            colors={['#2563eb', '#3b82f6']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 16 }}
+                        />
+                        {/* Background Pattern */}
+                        <View className='absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16' />
+                        <View className='absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12' />
 
-                    {/* Content */}
-                    <View className='relative z-10'>
-                        <View className='flex-row items-center justify-between'>
-                            <View className='flex-1'>
-                                <Text className='text-white text-2xl font-bold mb-2'>Find Your Dream Home</Text>
-                                <Text className='text-blue-100 text-base mb-4 leading-5'>
-                                    Discover exclusive properties with premium amenities and modern designs
-                                </Text>
-                                <TouchableOpacity className='bg-white/20 px-6 py-3 rounded-xl border border-white/30 self-start'>
-                                    <Text className='text-white font-semibold'>Explore Now</Text>
-                                </TouchableOpacity>
-                            </View>
+                        {/* Content */}
+                        <View className='relative z-10'>
+                            <View className='flex-row items-center justify-between'>
+                                <View className='flex-1'>
+                                    <Text className='text-white text-2xl font-bold mb-2'>Find Your Dream Home</Text>
+                                    <Text className='text-blue-100 text-base mb-4 leading-5'>
+                                        Discover exclusive properties with premium amenities and modern designs
+                                    </Text>
+                                    <TouchableOpacity className='bg-white/20 px-6 py-3 rounded-xl border border-white/30 self-start'>
+                                        <Text className='text-white font-semibold'>Explore Now</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                            {/* Property Icon */}
-                            <View className='ml-4'>
-                                <View className='w-20 h-20 bg-white/20 rounded-2xl items-center justify-center border border-white/30'>
-                                    <Text className='text-4xl'>🏠</Text>
+                                {/* Property Icon */}
+                                <View className='ml-4'>
+                                    <View className='w-20 h-20 bg-white/20 rounded-2xl items-center justify-center border border-white/30'>
+                                        <Text className='text-4xl'>🏠</Text>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-
-                        {/* Stats Row */}
-                        <View className='flex-row mt-6 space-x-6'>
-                            <View className='flex-1'>
-                                <Text className='text-white text-xl font-bold'>500+</Text>
-                                <Text className='text-blue-100 text-sm'>Properties</Text>
-                            </View>
-                            <View className='flex-1'>
-                                <Text className='text-white text-xl font-bold'>50+</Text>
-                                <Text className='text-blue-100 text-sm'>Cities</Text>
-                            </View>
-                            <View className='flex-1'>
-                                <Text className='text-white text-xl font-bold'>1000+</Text>
-                                <Text className='text-blue-100 text-sm'>Happy Clients</Text>
-                            </View>
-                        </View>
                     </View>
-                </View>
+                </MotiView>
 
                 {/* Chips */}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className='mt-6' contentContainerStyle={{ gap: 8 }}>
-                    {['Recommended', 'Top Rated', 'Most Viewed'].map((label) => (
-                        <TouchableOpacity
-                            key={label}
-                            className={`px-4 py-2 rounded-xl border border-zinc-800 ${activeChip === label ? 'bg-chip-active' : 'bg-chip-inactive'}`}
-                            onPress={() => handleChipPress(label)}
-                        >
-                            <Text className={activeChip === label ? 'text-white' : 'text-zinc-300'}>{label}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </ScrollView>
+                <MotiView
+                    from={{ opacity: 0, translateY: 20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'timing', duration: 600, delay: 500 }}
+                    className='px-2'
+                >
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className='mt-6' contentContainerStyle={{ gap: 8 }}>
+                        {['Recommended', 'Top Rated', 'Most Viewed'].map((label, index) => (
+                            <MotiView
+                                key={label}
+                                from={{ opacity: 0, translateX: -20 }}
+                                animate={{ opacity: 1, translateX: 0 }}
+                                transition={{ type: 'timing', duration: 500, delay: 500 + (index * 75) }}
+
+                            >
+                                <MotiView
+                                    animate={{
+                                        scale: activeChip === label ? 1.05 : 1,
+                                        backgroundColor: activeChip === label ? '#3b82f6' : '#1f2937'
+                                    }}
+                                    transition={{ type: 'timing', duration: 200 }}
+                                    className='border border-zinc-800 rounded-xl overflow-hidden'
+                                >
+                                    <TouchableOpacity
+                                        className={`px-4 py-2 rounded-xl ${activeChip === label ? 'bg-chip-active' : 'bg-chip-inactive'}`}
+                                        onPress={() => handleChipPress(label)}
+                                    >
+                                        <Text className={activeChip === label ? 'text-white' : 'text-zinc-300'}>{label}</Text>
+                                    </TouchableOpacity>
+                                </MotiView>
+                            </MotiView>
+                        ))}
+                    </ScrollView>
+                </MotiView>
 
                 {/* Featured Carousel */}
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className='mt-6'>
-                    {filteredProperties.slice(0, 3).map((property) => (
-                        <View key={property.id} className='mr-4 w-72'>
-                            <View className='w-full aspect-[16/9] rounded-2xl overflow-hidden'>
-                                <Image
-                                    source={property.thumbnail ? { uri: property.thumbnail } : require('../../../assets/HomeScreen/img-1.jpg')}
-                                    className='h-full w-full'
-                                    defaultSource={require('../../../assets/HomeScreen/img-1.jpg')}
-                                />
-                            </View>
-                            <View className='mt-3'>
-                                <Text className='text-white text-lg font-semibold' numberOfLines={1}>{property.title}</Text>
-                                <Text className='text-white mt-1 capitalize'>{property.type}</Text>
-                                <Text className='text-zinc-400 mt-1' numberOfLines={1}>{property.city}, {property.province}</Text>
-                            </View>
-                        </View>
-                    ))}
-                </ScrollView>
-
-                {/* Debug Info */}
-                <View className='mt-6 p-4 bg-zinc-800/50 rounded-xl border border-zinc-700'>
-                    <Text className='text-white font-bold mb-2'>Debug Info:</Text>
-                    <Text className='text-zinc-400 text-sm'>Permission: {hasLocationPermission ? 'Granted' : 'Denied'}</Text>
-                    <Text className='text-zinc-400 text-sm'>Loading: {locationLoading ? 'Yes' : 'No'}</Text>
-                    <Text className='text-zinc-400 text-sm'>Error: {locationError || 'None'}</Text>
-                    <Text className='text-zinc-400 text-sm'>Location: {userLocation ? `${userLocation.province} (${userLocation.latitude}, ${userLocation.longitude})` : 'None'}</Text>
-                    <Text className='text-zinc-400 text-sm'>Province Slug: {provinceSlug}</Text>
-
-                    {locationError && (
-                        <TouchableOpacity
-                            onPress={retry}
-                            className='mt-3 bg-accent-blue-500 px-4 py-2 rounded-lg'
-                        >
-                            <Text className='text-white font-semibold text-center'>Retry Location</Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
-
-                {/* Near You */}
-                <View className='mt-6'>
-                    {/* Section Header */}
-                    <View className='flex-row items-center justify-between mb-6'>
-                        <View className='flex-row items-center'>
-                            <View className='w-1 h-6 bg-gradient-to-b from-accent-blue-500 to-accent-blue-600 rounded-full' />
-                            <View>
-                                <Text className='text-white text-xl font-bold'>Dekat Anda</Text>
-                                <Text className='text-zinc-400 text-sm'>
-                                    {userLocation ? `Properti di ${userLocation.province}` : 'Properti di area Anda'}
-                                </Text>
-                            </View>
-                        </View>
-
-                        <TouchableOpacity
-                            onPress={handleViewAllNearYou}
-                            className='flex-row items-center bg-zinc-800/50 px-4 py-2 rounded-xl border border-zinc-700'
-                        >
-                            <Text className='text-accent-blue-500 font-medium mr-1'>Lihat Semua</Text>
-                            <Text className='text-accent-blue-500'>→</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Properties List */}
-                    <View className='flex flex-col gap-4'>
-                        {filteredProperties.slice(3).map((property, index) => (
-                            <TouchableOpacity
+                <MotiView
+                    from={{ opacity: 0, translateY: 20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{ type: 'timing', duration: 600, delay: 500 }}
+                >
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className='mt-6' contentContainerStyle={{ paddingLeft: 8 }}>
+                        {filteredProperties.slice(0, 3).map((property, index) => (
+                            <MotiView
                                 key={property.id}
-                                className='bg-zinc-900/80 rounded-3xl overflow-hidden border border-zinc-800/50 active:bg-zinc-800/60'
-                                style={{
-                                    shadowColor: '#000',
-                                    shadowOffset: { width: 0, height: 4 },
-                                    shadowOpacity: 0.1,
-                                    shadowRadius: 8,
-                                    elevation: 4,
-                                }}
+                                from={{ opacity: 0, translateX: 50 }}
+                                animate={{ opacity: 1, translateX: 0 }}
+                                transition={{ type: 'timing', duration: 500, delay: 800 + (index * 75) }}
                             >
-                                {/* Property Image with Overlay Details */}
-                                <View className='w-full h-80 relative overflow-hidden'>
+                                <TouchableOpacity className='mr-4 w-80 h-64 rounded-2xl overflow-hidden relative'>
+                                    {/* Full Background Image */}
                                     <Image
-                                        source={property.thumbnail ? { uri: property.thumbnail } : require('../../../assets/HomeScreen/img-2.jpg')}
+                                        source={property.thumbnail ? { uri: property.thumbnail } : require('../../../assets/HomeScreen/img-1.jpg')}
                                         className='w-full h-full'
                                         resizeMode='cover'
-                                        defaultSource={require('../../../assets/HomeScreen/img-2.jpg')}
+                                        defaultSource={require('../../../assets/HomeScreen/img-1.jpg')}
                                     />
 
-                                    <LinearGradient
-                                        colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.8)']}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 0, y: 1 }}
-                                        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-                                    />
+                                    {/* Dark Overlay */}
+                                    <View className='absolute inset-0 bg-black/40' />
 
-                                    {/* Property Type Badge */}
-                                    <View className='absolute top-3 right-3 bg-accent-blue-600/90 px-3 py-1.5 rounded-lg border border-white/20'>
-                                        <Text className='text-white text-xs font-semibold'>{property.type}</Text>
-                                    </View>
-
-                                    {/* Property Details Overlay */}
+                                    {/* Content Overlay */}
                                     <View className='absolute bottom-0 left-0 right-0 p-4'>
-                                        {/* Title */}
-                                        <Text className='text-white text-xl font-bold mb-2' numberOfLines={2}>
+                                        {/* Property Type */}
+                                        <View className='self-start mb-2'>
+                                            <Text className='bg-accent-blue-600/90 px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-semibold'>{property.type}</Text>
+                                        </View>
+
+                                        {/* Property Title */}
+                                        <Text className='text-white text-lg font-bold mb-2' numberOfLines={1}>
                                             {property.title}
                                         </Text>
 
-                                        {/* Status and Location */}
-                                        <View className='flex-row items-center justify-between mb-3'>
-                                            <View className='flex-row items-center'>
-                                                <View className='w-2 h-2 bg-green-500 rounded-full mr-2' />
-                                                <Text className='text-green-400 text-sm font-medium'>{property.statusProject}</Text>
-                                            </View>
-
-                                            <View className='flex-row items-center'>
-                                                <Text className='text-zinc-300 text-sm'>📍</Text>
-                                                <Text className='text-zinc-300 text-sm ml-1' numberOfLines={1}>
-                                                    {property.city}, {property.province}
-                                                </Text>
-                                            </View>
+                                        {/* Address */}
+                                        <View className='flex-row items-center mb-2'>
+                                            <Text className='text-white text-xs mr-1'>📍</Text>
+                                            <Text className='text-zinc-300 text-xs' numberOfLines={1}>
+                                                {property.city}, {property.province}
+                                            </Text>
                                         </View>
 
                                         {/* Facilities */}
                                         {property.facilities && property.facilities.length > 0 && (
-                                            <View className='flex-row flex-wrap gap-2'>
-                                                {property.facilities.slice(0, 3).map((facility: PropertyFacility, idx: number) => (
+                                            <View className='flex-row flex-wrap gap-1'>
+                                                {property.facilities.slice(0, 2).map((facility: PropertyFacility, idx: number) => (
                                                     <View key={idx} className='flex-row items-center bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
                                                         {facility.imageUrl ? (
                                                             <Image
                                                                 source={{ uri: facility.imageUrl }}
-                                                                className='w-6 h-6 rounded-full mr-1 object-cover bg-white/30 border border-white/30 p-1 mix-blend-screen'
+                                                                className='w-4 h-4 rounded-full mr-1 object-cover bg-white/30 border border-white/30 p-0.5 mix-blend-screen'
                                                                 resizeMode='cover'
                                                             />
                                                         ) : (
-                                                            <View className='w-3 h-3 rounded-full bg-white/30 mr-1' />
+                                                            <View className='w-2 h-2 rounded-full bg-white/30 mr-1' />
                                                         )}
                                                         <Text className='text-white text-xs font-medium'>{facility.title}</Text>
                                                     </View>
                                                 ))}
-                                                {property.facilities.length > 3 && (
+                                                {property.facilities.length > 2 && (
                                                     <View className='bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
                                                         <Text className='text-white text-xs font-medium'>
-                                                            +{property.facilities.length - 3} more
+                                                            +{property.facilities.length - 2} more
                                                         </Text>
                                                     </View>
                                                 )}
                                             </View>
                                         )}
                                     </View>
-                                </View>
-                            </TouchableOpacity>
+                                </TouchableOpacity>
+                            </MotiView>
                         ))}
+                    </ScrollView>
+                </MotiView>
+
+                {/* Near You */}
+                <View className='mt-8 px-2'>
+                    {/* Modern Section Header */}
+                    <MotiView
+                        from={{ opacity: 0, translateY: 20 }}
+                        animate={{ opacity: 1, translateY: 0 }}
+                        transition={{ type: 'timing', duration: 600, delay: 500 }}
+                    >
+                        <View className='mb-6'>
+                            {/* Main Header Row */}
+                            <View className='flex-row items-center justify-between mb-4'>
+                                <View className='flex-row items-center flex-1'>
+                                    {/* Modern Accent Line with Gradient */}
+                                    <LinearGradient
+                                        colors={['#3b82f6', '#1d4ed8']}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 0, y: 1 }}
+                                        className='w-1 h-8 rounded-full mr-4'
+                                    />
+
+                                    {/* Header Content */}
+                                    <View className='flex-1'>
+                                        <View className='flex-row items-center mb-1'>
+                                            <Text className='text-white text-2xl font-bold tracking-tight'>Dekat Anda</Text>
+                                        </View>
+
+                                        <Text className='text-zinc-400 text-base leading-relaxed'>
+                                            {userLocation ? `Properti terpilih di ${userLocation.province}` : 'Aktifkan lokasi untuk melihat properti di sekitar Anda'}
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                {/* Modern Action Button with Enhanced Interactions */}
+                                <MotiView
+                                    animate={{
+                                        scale: 1,
+                                    }}
+                                    transition={{ type: 'timing', duration: 200 }}
+                                >
+                                    <TouchableOpacity
+                                        onPress={handleViewAllNearYou}
+                                        className='flex-row items-center bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-3 rounded-2xl border border-blue-500/30 shadow-lg active:scale-95'
+                                        style={{
+                                            shadowColor: '#3b82f6',
+                                            shadowOffset: { width: 0, height: 4 },
+                                            shadowOpacity: 0.3,
+                                            shadowRadius: 8,
+                                            elevation: 8,
+                                        }}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Text className='text-white font-semibold text-sm mr-2'>Lihat Semua</Text>
+                                        <MotiView
+                                            animate={{
+                                                translateX: [0, 2, 0],
+                                            }}
+                                            transition={{
+                                                type: 'timing',
+                                                duration: 1500,
+                                                loop: true,
+                                            }}
+                                        >
+                                            <View className='w-5 h-5 bg-white/20 rounded-full items-center justify-center'>
+                                                <Text className='text-white text-xs font-bold'>→</Text>
+                                            </View>
+                                        </MotiView>
+                                    </TouchableOpacity>
+                                </MotiView>
+                            </View>
+                        </View>
+                    </MotiView>
+
+                    {/* Properties List */}
+                    <View className='flex flex-col gap-4'>
+                        {hasLocationPermission && userLocation ? (
+                            filteredProperties.slice(3).map((property, index) => (
+                                <MotiView
+                                    key={property.id}
+                                    from={{ opacity: 0, translateY: 30 }}
+                                    animate={{ opacity: 1, translateY: 0 }}
+                                    transition={{ type: 'timing', duration: 500, delay: 1000 + (index * 75) }}
+                                >
+                                    <TouchableOpacity
+                                        className='bg-zinc-800 rounded-2xl overflow-hidden border border-zinc-700 active:bg-zinc-700'
+                                        style={{
+                                            shadowColor: '#000',
+                                            shadowOffset: { width: 0, height: 2 },
+                                            shadowOpacity: 0.1,
+                                            shadowRadius: 4,
+                                            elevation: 2,
+                                        }}
+                                    >
+                                        <View className='flex-row'>
+                                            {/* Image Section - Left */}
+                                            <View className='w-44 h-44 relative'>
+                                                <Image
+                                                    source={property.thumbnail ? { uri: property.thumbnail } : require('../../../assets/HomeScreen/img-2.jpg')}
+                                                    className='w-full h-full'
+                                                    resizeMode='cover'
+                                                    defaultSource={require('../../../assets/HomeScreen/img-2.jpg')}
+                                                />
+                                                {/* Property Type */}
+                                                <View className='absolute bottom-2 left-2'>
+                                                    <View className='bg-accent-blue-600/90 border border-white/20 px-2 py-1 rounded-md'>
+                                                        <Text className='text-white text-xs font-semibold capitalize'>{property.type}</Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+
+                                            {/* Text Details Section - Right */}
+                                            <View className='flex-1 p-4 justify-between'>
+                                                {/* Property Title */}
+                                                <Text className='text-white text-lg font-bold mb-2' numberOfLines={1}>
+                                                    {property.title}
+                                                </Text>
+
+                                                {/* Address */}
+                                                <View className='flex-row items-center mb-3'>
+                                                    <Text className='text-white text-xs mr-1'>📍</Text>
+                                                    <Text className='text-zinc-400 text-xs' numberOfLines={1}>
+                                                        {property.city}, {property.province}
+                                                    </Text>
+                                                </View>
+
+                                                {/* Facilities */}
+                                                {property.facilities && property.facilities.length > 0 && (
+                                                    <View className='flex-row flex-wrap gap-2'>
+                                                        {property.facilities.slice(0, 2).map((facility: PropertyFacility, idx: number) => (
+                                                            <View key={idx} className='flex-row items-center bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
+                                                                {facility.imageUrl ? (
+                                                                    <Image
+                                                                        source={{ uri: facility.imageUrl }}
+                                                                        className='w-6 h-6 rounded-full mr-1 object-cover bg-white/30 border border-white/30 p-1 mix-blend-screen'
+                                                                        resizeMode='cover'
+                                                                    />
+                                                                ) : (
+                                                                    <View className='w-3 h-3 rounded-full bg-white/30 mr-1' />
+                                                                )}
+                                                                <Text className='text-white text-xs font-medium'>{facility.title}</Text>
+                                                            </View>
+                                                        ))}
+                                                        {property.facilities.length > 2 && (
+                                                            <View className='bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30 flex items-center justify-center'>
+                                                                <Text className='text-white text-xs font-medium'>
+                                                                    +{property.facilities.length - 2} more
+                                                                </Text>
+                                                            </View>
+                                                        )}
+                                                    </View>
+                                                )}
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                </MotiView>
+                            ))
+                        ) : (
+                            <MotiView
+                                from={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ type: 'timing', duration: 600, delay: 1200 }}
+                            >
+                                <View className='bg-zinc-900/80 rounded-3xl p-8 border border-zinc-800/50 items-center justify-center'>
+                                    <MotiView
+                                        from={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ type: 'timing', duration: 500, delay: 1400 }}
+                                    >
+                                        <View className='w-16 h-16 bg-zinc-800 rounded-full items-center justify-center mb-4'>
+                                            <Text className='text-2xl'>📍</Text>
+                                        </View>
+                                    </MotiView>
+                                    <MotiView
+                                        from={{ opacity: 0, translateY: 20 }}
+                                        animate={{ opacity: 1, translateY: 0 }}
+                                        transition={{ type: 'timing', duration: 500, delay: 1500 }}
+                                    >
+                                        <Text className='text-white text-lg font-semibold mb-2'>Aktifkan Lokasi</Text>
+                                    </MotiView>
+                                    <MotiView
+                                        from={{ opacity: 0, translateY: 20 }}
+                                        animate={{ opacity: 1, translateY: 0 }}
+                                        transition={{ type: 'timing', duration: 500, delay: 1600 }}
+                                    >
+                                        <Text className='text-zinc-400 text-center mb-4'>
+                                            Aktifkan akses lokasi untuk melihat properti di sekitar Anda
+                                        </Text>
+                                    </MotiView>
+                                    <MotiView
+                                        from={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ type: 'timing', duration: 500, delay: 1700 }}
+                                    >
+                                        <TouchableOpacity
+                                            onPress={handleViewAllNearYou}
+                                            className='bg-accent-blue-600 px-6 py-3 rounded-xl'
+                                        >
+                                            <Text className='text-white font-semibold'>Aktifkan Lokasi</Text>
+                                        </TouchableOpacity>
+                                    </MotiView>
+                                </View>
+                            </MotiView>
+                        )}
                     </View>
                 </View>
             </View>
-        </ScrollView>
+        </ScrollView >
     )
 }

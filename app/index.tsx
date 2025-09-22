@@ -20,26 +20,24 @@ export default function Index() {
 
       try {
         const isFirstTime = await AsyncStorage.getItem('is_first_time');
+        const hasVisitedAuth = await AsyncStorage.getItem('has_visited_auth');
 
         if (isFirstTime === null) {
-          // First time user - show permission screen
           hasRedirected.current = true;
           router.replace('/permissions');
           await AsyncStorage.setItem('is_first_time', 'false');
-        } else if (allPermissionsGranted) {
-          // User has granted all permissions - go to main app
+        } else if (hasVisitedAuth === 'true') {
+          // User has already visited auth page before (login or skip)
           hasRedirected.current = true;
           router.replace('/(tabs)/properties');
         } else {
-          // User has used app before but permissions not granted - go to main app
+          // User needs to go through auth flow (permissions already handled or not needed)
           hasRedirected.current = true;
-          router.replace('/(tabs)/properties');
+          router.replace('/auth');
         }
-      } catch (error) {
-        console.error('Error checking first time user:', error);
-        // Fallback to main app
+      } catch {
         hasRedirected.current = true;
-        router.replace('/(tabs)/properties');
+        router.replace('/auth');
       }
     };
 
