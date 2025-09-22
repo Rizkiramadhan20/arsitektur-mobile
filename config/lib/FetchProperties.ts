@@ -74,3 +74,41 @@ export const fetchPropertiesByProvince = async (type: string, province: string, 
         );
     }
 };
+
+export const fetchPropertiesBySlug = async (type: string, province: string, slug: string): Promise<PropertyDetailResponse> => {
+    try {
+        const envUrl = `${process.env.EXPO_PUBLIC_API}/properties/${type}/${province}/${slug}`;
+        const apiSecret = process.env.EXPO_PUBLIC_API_SECRET;
+
+        if (!envUrl) {
+            throw new Error("EXPO_PUBLIC_API not configured");
+        }
+
+        if (!apiSecret) {
+            throw new Error("EXPO_PUBLIC_API_SECRET not configured");
+        }
+
+        const response = await fetch(envUrl, {
+            headers: {
+                Authorization: `Bearer ${apiSecret}`,
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const json: PropertyDetailResponse = await response.json();
+
+        if (!json.ok || !json.data) {
+            throw new Error("No properties data available for this slug");
+        }
+
+        return json;
+    } catch (error) {
+        throw new Error(
+            `Failed to fetch properties data by slug: ${error instanceof Error ? error.message : "Unknown error"}`
+        );
+    }
+};

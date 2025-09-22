@@ -54,3 +54,35 @@ interface PropertiesByProvinceResponse {
 }
 
 //================== Property By Details ==================//
+
+interface PropertyAuthor {
+    name: string;
+    photoURL: string;
+    uid: string;
+    role: string;
+}
+
+interface PropertyDetail {
+    id: string;
+    title: string;
+    slug: string;
+    facilities: PropertyFacility[];
+    images: string[];
+    province: string;
+    city: string;
+    statusProject: string;
+    type: string;
+    description: string;
+    author: PropertyAuthor;
+    content: string;
+    createdAt: string;
+    related: Property[];
+}
+
+interface PropertyDetailResponse {
+    statusCode: number;
+    statusMessage: string;
+    message: string;
+    ok: boolean;
+    data: PropertyDetail;
+}

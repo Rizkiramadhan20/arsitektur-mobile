@@ -97,6 +97,14 @@ export default function Index() {
         }, [])
     )
 
+    const handlePropertyClick = (property: Property) => {
+        const query = new URLSearchParams({
+            type: property.type,
+            province: property.province,
+        }).toString()
+        router.push(`/properties/${property.slug}?${query}`)
+    }
+
     if (loading) {
         return (
             <ProperstiesSkelaton />
@@ -254,7 +262,7 @@ export default function Index() {
                                 animate={{ opacity: 1, translateX: 0 }}
                                 transition={{ type: 'timing', duration: 500, delay: 800 + (index * 75) }}
                             >
-                                <TouchableOpacity className='mr-4 w-80 h-64 rounded-2xl overflow-hidden relative'>
+                                <TouchableOpacity className='mr-4 w-80 h-64 rounded-2xl overflow-hidden relative' onPress={() => handlePropertyClick(property)}>
                                     {/* Full Background Image */}
                                     <Image
                                         source={property.thumbnail ? { uri: property.thumbnail } : require('../../../assets/HomeScreen/img-1.jpg')}
@@ -410,6 +418,7 @@ export default function Index() {
                                             shadowRadius: 4,
                                             elevation: 2,
                                         }}
+                                        onPress={() => handlePropertyClick(property)}
                                     >
                                         <View className='flex-row'>
                                             {/* Image Section - Left */}
