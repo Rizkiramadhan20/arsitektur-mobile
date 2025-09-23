@@ -4,11 +4,6 @@ import { TextInput } from 'react-native'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-export type UseStateSearchParams = {
-    initialQuery?: string
-    fetchProperties: (page: number) => Promise<{ data: Property[] }>
-}
-
 export function useStateSearch(params: UseStateSearchParams) {
     const { initialQuery = '', fetchProperties } = params
 

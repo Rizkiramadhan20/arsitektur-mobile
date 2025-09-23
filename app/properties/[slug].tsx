@@ -8,9 +8,11 @@ import { BlurView } from 'expo-blur'
 
 import { Ionicons } from '@expo/vector-icons'
 
-import MediaPlayet from '@/components/properties/details/media/MediaPlayet'
+import MediaPlayer from '@/components/properties/details/media/MediaPlayer'
 
 import ImageSlider from '@/components/properties/details/media/ImageSlider'
+
+import ModalImages from '@/components/properties/details/media/ModalImages'
 
 import ShareModal from '@/components/properties/details/social-media/ShareModal'
 
@@ -146,7 +148,9 @@ export default function PropertiesDetails() {
                 {/* Title and meta */}
                 <View className='px-2 pt-4 pb-3 border-b border-zinc-800 flex flex-col gap-2'>
                     <View className='flex-row items-center gap-2'>
-                        <Text className='bg-accent-blue-600 px-3 py-1 rounded-md text-white text-md capitalize'>{data.type}</Text>
+                        <TouchableOpacity className='bg-accent-blue-600 px-3 py-1 rounded-md text-white text-md capitalize' onPress={() => router.push(`/properties/type/${data.type}?title=${encodeURIComponent(data.title)}`)}>
+                            <Text className='text-white text-md capitalize'>{data.type}</Text>
+                        </TouchableOpacity>
                         <View className='flex-row items-center bg-emerald-500/90 px-3 py-1 rounded-md border border-white/10'>
                             <View className='w-2 h-2 bg-emerald-300 rounded-full mr-2' />
                             <Text className='text-white text-md font-semibold capitalize'>{data.statusProject}</Text>
@@ -206,7 +210,7 @@ export default function PropertiesDetails() {
                         <View className='px-2'>
                             {data.content ? (
                                 <View className='mt-2'>
-                                    <MediaPlayet html={data.content} />
+                                    <MediaPlayer html={data.content} />
                                 </View>
                             ) : null}
                         </View>
@@ -222,11 +226,12 @@ export default function PropertiesDetails() {
                                         key={item.id}
                                         activeOpacity={0.9}
                                         className='bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 shadow-lg'
+                                        onPress={() => router.push(`/properties/${item.slug}?type=${item.type}&province=${item.province}&title=${encodeURIComponent(item.title)}`)}
                                     >
                                         <View className='flex-row'>
                                             <View className='w-36 h-36 relative'>
                                                 <Image
-                                                    source={item.thumbnail ? { uri: item.thumbnail } : require('../../assets/HomeScreen/img-2.jpg')}
+                                                    source={{ uri: item.thumbnail }}
                                                     className='w-full h-full'
                                                     resizeMode='cover'
                                                 />
@@ -243,26 +248,24 @@ export default function PropertiesDetails() {
                                                     <Text className='text-zinc-400 text-xs mt-1' numberOfLines={1}>📍{item.city}, {item.province}</Text>
                                                 </View>
 
-                                                {item.facilities && item.facilities.length > 0 && (
-                                                    <View className='flex-row flex-wrap gap-2 mt-2'>
-                                                        {item.facilities.slice(0, 2).map((facility, idx) => (
-                                                            <View key={idx} className='flex-row items-center bg-white/10 px-2 py-1 rounded-md border border-white/20'>
-                                                                {facility.imageUrl ? (
-                                                                    <Image source={{ uri: facility.imageUrl }} className='w-4 h-4 rounded-full mr-1' resizeMode='cover' />
-                                                                ) : (
-                                                                    <View className='w-2 h-2 rounded-full bg-white/30 mr-1' />
-                                                                )}
-                                                                <Text className='text-white text-[10px]'>{facility.title}</Text>
-                                                            </View>
-                                                        ))}
+                                                <View className='flex-row flex-wrap gap-2 mt-2'>
+                                                    {item.facilities.slice(0, 2).map((facility, idx) => (
+                                                        <View key={idx} className='flex-row items-center bg-white/10 px-2 py-1 rounded-md border border-white/20'>
+                                                            {facility.imageUrl ? (
+                                                                <Image source={{ uri: facility.imageUrl }} className='w-4 h-4 rounded-full mr-1' resizeMode='cover' />
+                                                            ) : (
+                                                                <View className='w-2 h-2 rounded-full bg-white/30 mr-1' />
+                                                            )}
+                                                            <Text className='text-white text-[10px]'>{facility.title}</Text>
+                                                        </View>
+                                                    ))}
 
-                                                        {item.facilities.length > 2 && (
-                                                            <View className='bg-white/10 px-2 py-1 rounded-md border border-white/20'>
-                                                                <Text className='text-white text-[10px]'>+{item.facilities.length - 2} more</Text>
-                                                            </View>
-                                                        )}
-                                                    </View>
-                                                )}
+                                                    {item.facilities.length > 2 && (
+                                                        <View className='bg-white/10 px-2 py-1 rounded-md border border-white/20'>
+                                                            <Text className='text-white text-[10px]'>+{item.facilities.length - 2} more</Text>
+                                                        </View>
+                                                    )}
+                                                </View>
                                             </View>
                                         </View>
                                     </TouchableOpacity>
@@ -304,7 +307,7 @@ export default function PropertiesDetails() {
 
             {/* Persistent sticky top actions overlay */}
             <BlurView
-                className='absolute top-2 left-0 right-0 z-50 py-2 pb-2 rounded-b-3xl overflow-hidden bg-black/40'
+                className='absolute top-0 left-0 right-0 z-50 py-2 pb-2 rounded-b-3xl overflow-hidden bg-black/40'
                 tint='dark'
                 intensity={Math.floor(Math.min(scrollY / 120, 1) * 80)}
                 experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
@@ -354,31 +357,14 @@ export default function PropertiesDetails() {
                 data={data}
             />
 
-            {/* Fullscreen image overlay moved to page level */}
-            {isFullscreen && (
-                <View className='absolute inset-0 z-50 bg-black'>
-                    <TouchableOpacity className='flex-1' activeOpacity={1} onPress={() => setFullscreenIndex((prev) => (prev + 1) % (data.images?.length || 1))}>
-                        <View className='flex-1'>
-                            {data.images.map((uri, idx) => (
-                                <View key={idx} className={`absolute inset-0 ${fullscreenIndex === idx ? 'opacity-100' : 'opacity-0'}`}>
-                                    <Image source={{ uri }} className='w-full h-full' resizeMode='contain' />
-                                </View>
-                            ))}
-                        </View>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => setIsFullscreen(false)} className='absolute top-16 right-4 h-10 w-10 rounded-full items-center justify-center bg-black/45'>
-                        <Ionicons name='close' size={22} color={'#ffffff'} />
-                    </TouchableOpacity>
-                    <View pointerEvents='none' className='absolute bottom-6 left-0 right-0 items-center'>
-                        <View className='flex-row items-center justify-center'>
-                            {data.images.map((_, i) => (
-                                <View key={i} className={`h-2 rounded-full mx-1 ${i === fullscreenIndex ? 'bg-white w-4' : 'bg-white/40 w-1.5'}`} />
-                            ))}
-                        </View>
-                    </View>
-                </View>
-            )}
+            {/* Fullscreen image modal */}
+            <ModalImages
+                visible={isFullscreen}
+                images={data.images}
+                currentIndex={fullscreenIndex}
+                onClose={() => setIsFullscreen(false)}
+                onImageChange={setFullscreenIndex}
+            />
         </View >
     )
 }

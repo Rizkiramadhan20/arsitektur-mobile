@@ -2,13 +2,7 @@ import React from 'react'
 
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
-import { useRouter } from 'expo-router'
-
-import AllPropertiesNotfound from '@/components/properties/all-properties/AllPropertiesNotfound'
-
-import AllProperstiesSkelaton from '@/components/properties/all-properties/AllProperstiesSkelaton'
-
-import AllPropertiesFilter from "@/components/properties/all-properties/AllPropertiesFilter"
+import { useRouter, useLocalSearchParams } from 'expo-router'
 
 import { Ionicons } from '@expo/vector-icons'
 
@@ -16,14 +10,21 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { MotiView } from 'moti'
 
-import FilterModal from '@/components/properties/all-properties/modal/FilterModal'
+import TypeNotFound from '@/components/properties/type/TypeNotFound'
 
-import { useStateAllProperties } from '@/components/properties/all-properties/lib/useStateAllProperties'
+import TypeSkeleton from '@/components/properties/type/TypeSkeleton'
+
+import TypeFilter from '@/components/properties/type/TypeFilter'
+
+import FilterModal from '@/components/properties/all-properties/modal/FilterModal'
 
 import AllPropertiesCard from '@/components/properties/all-properties/card/AllPropertiesCard'
 
-export default function AllProperties() {
+import { useStateType } from '@/components/properties/type/lib/useStateType'
+
+export default function TypePage() {
     const router = useRouter()
+    const { type } = useLocalSearchParams<{ type: string }>()
 
     const {
         // State
@@ -33,7 +34,6 @@ export default function AllProperties() {
         endReachedDuringMomentum,
         searchQuery,
         showFilter,
-        selectedType,
         selectedProvince,
         selectedCity,
         selectedStatus,
@@ -49,7 +49,6 @@ export default function AllProperties() {
         // Actions
         setSearchQuery,
         setShowFilter,
-        setSelectedType,
         setSelectedProvince,
         setSelectedCity,
         setSelectedStatus,
@@ -57,18 +56,14 @@ export default function AllProperties() {
         loadMore,
         onRefresh,
         resetFilters
-    } = useStateAllProperties()
+    } = useStateType({ type: type || '' })
 
     if (loading) {
-        return (
-            <AllProperstiesSkelaton />
-        )
+        return <TypeSkeleton />
     }
 
     if (error) {
-        return (
-            <AllPropertiesNotfound />
-        )
+        return <TypeNotFound />
     }
 
     return (
@@ -85,7 +80,7 @@ export default function AllProperties() {
                         <TouchableOpacity onPress={() => router.back()} className='h-10 w-10 rounded-full items-center justify-center border border-zinc-800 bg-zinc-900'>
                             <Ionicons name='chevron-back' size={22} color={'#ffffff'} />
                         </TouchableOpacity>
-                        <Text className='text-white text-lg font-semibold'>All Properties</Text>
+                        <Text className='text-white text-lg font-semibold capitalize'>{type} Properties</Text>
                         <View className='h-10 w-10' />
                     </View>
                 </MotiView>
@@ -151,14 +146,13 @@ export default function AllProperties() {
                 ) : null}
                 ListEmptyComponent={!loading ? (
                     <View className='px-2'>
-                        <AllPropertiesFilter
+                        <TypeFilter
                             onOpenFilter={() => setShowFilter(true)}
                             onReset={resetFilters}
                             hasActiveFilters={hasActiveFilters}
-                            types={types}
-                            statuses={statuses}
                             provinces={provinces}
                             cities={cities}
+                            statuses={statuses}
                         />
                     </View>
                 ) : null}
@@ -172,11 +166,11 @@ export default function AllProperties() {
                 statuses={statuses}
                 provinces={provinces}
                 cities={cities}
-                selectedType={selectedType}
-                selectedStatus={selectedStatus}
-                selectedProvince={selectedProvince}
-                selectedCity={selectedCity}
-                onSelectType={setSelectedType}
+                selectedType={type || null}
+                selectedStatus={selectedStatus || null}
+                selectedProvince={selectedProvince || null}
+                selectedCity={selectedCity || null}
+                onSelectType={() => { }} // Disabled for type page
                 onSelectStatus={setSelectedStatus}
                 onSelectProvince={setSelectedProvince}
                 onSelectCity={setSelectedCity}

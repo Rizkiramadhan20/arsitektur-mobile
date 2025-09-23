@@ -267,7 +267,10 @@ export default function Index() {
                                 animate={{ opacity: 1, translateX: 0 }}
                                 transition={{ type: 'timing', duration: 500, delay: 800 + (index * 75) }}
                             >
-                                <TouchableOpacity className='mr-4 w-80 h-64 rounded-2xl overflow-hidden relative' onPress={() => handlePropertyClick(property)}>
+                                <TouchableOpacity
+                                    className='mr-4 w-80 aspect-[5/5] rounded-2xl overflow-hidden relative'
+                                    onPress={() => handlePropertyClick(property)}
+                                >
                                     {/* Full Background Image */}
                                     <Image
                                         source={property.thumbnail ? { uri: property.thumbnail } : require('../../../assets/HomeScreen/img-1.jpg')}
@@ -279,52 +282,63 @@ export default function Index() {
                                     {/* Dark Overlay */}
                                     <View className='absolute inset-0 bg-black/40' />
 
-                                    {/* Content Overlay */}
-                                    <View className='absolute bottom-0 left-0 right-0 p-4'>
-                                        {/* Property Type */}
-                                        <View className='self-start mb-2'>
-                                            <Text className='bg-accent-blue-600/90 px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-semibold'>{property.type}</Text>
-                                        </View>
-
-                                        {/* Property Title */}
-                                        <Text className='text-white text-lg font-bold mb-2' numberOfLines={1}>
-                                            {property.title}
-                                        </Text>
-
-                                        {/* Address */}
-                                        <View className='flex-row items-center mb-2'>
-                                            <Text className='text-white text-xs mr-1'>📍</Text>
-                                            <Text className='text-zinc-300 text-xs' numberOfLines={1}>
-                                                {property.city}, {property.province}
-                                            </Text>
-                                        </View>
-
-                                        {/* Facilities */}
-                                        {property.facilities && property.facilities.length > 0 && (
-                                            <View className='flex-row flex-wrap gap-1'>
-                                                {property.facilities.slice(0, 2).map((facility: PropertyFacility, idx: number) => (
-                                                    <View key={idx} className='flex-row items-center bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
-                                                        {facility.imageUrl ? (
-                                                            <Image
-                                                                source={{ uri: facility.imageUrl }}
-                                                                className='w-4 h-4 rounded-full mr-1 object-cover bg-white/30 border border-white/30 p-0.5 mix-blend-screen'
-                                                                resizeMode='cover'
-                                                            />
-                                                        ) : (
-                                                            <View className='w-2 h-2 rounded-full bg-white/30 mr-1' />
-                                                        )}
-                                                        <Text className='text-white text-xs font-medium'>{facility.title}</Text>
-                                                    </View>
-                                                ))}
-                                                {property.facilities.length > 2 && (
-                                                    <View className='bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
-                                                        <Text className='text-white text-xs font-medium'>
-                                                            +{property.facilities.length - 2} more
-                                                        </Text>
-                                                    </View>
-                                                )}
+                                    {/* Content Overlay - Fixed height container */}
+                                    <View className='absolute bottom-0 left-0 right-0 h-40 p-4'>
+                                        {/* Top Section - Property Type & Title */}
+                                        <View className='mb-3'>
+                                            {/* Property Type */}
+                                            <View className='self-start mb-2'>
+                                                <Text className='bg-accent-blue-600/90 px-3 py-1.5 rounded-lg border border-white/20 text-white text-xs font-semibold'>{property.type}</Text>
                                             </View>
-                                        )}
+
+                                            {/* Property Title - Fixed height */}
+                                            <View className='h-6 mb-2'>
+                                                <Text className='text-white text-lg font-bold' numberOfLines={1}>
+                                                    {property.title}
+                                                </Text>
+                                            </View>
+
+                                            {/* Address - Fixed height */}
+                                            <View className='h-4'>
+                                                <View className='flex-row items-center'>
+                                                    <Text className='text-white text-xs mr-1'>📍</Text>
+                                                    <Text className='text-zinc-300 text-xs' numberOfLines={1}>
+                                                        {property.city}, {property.province}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                        </View>
+
+                                        {/* Bottom Section - Facilities - Fixed height */}
+                                        <View className='h-8 justify-center'>
+                                            {property.facilities && property.facilities.length > 0 ? (
+                                                <View className='flex-row flex-wrap gap-1'>
+                                                    {property.facilities.slice(0, 2).map((facility: PropertyFacility, idx: number) => (
+                                                        <View key={idx} className='flex-row items-center bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
+                                                            {facility.imageUrl ? (
+                                                                <Image
+                                                                    source={{ uri: facility.imageUrl }}
+                                                                    className='w-4 h-4 rounded-full mr-1 object-cover bg-white/30 border border-white/30 p-0.5 mix-blend-screen'
+                                                                    resizeMode='cover'
+                                                                />
+                                                            ) : (
+                                                                <View className='w-2 h-2 rounded-full bg-white/30 mr-1' />
+                                                            )}
+                                                            <Text className='text-white text-xs font-medium' numberOfLines={1}>{facility.title}</Text>
+                                                        </View>
+                                                    ))}
+                                                    {property.facilities.length > 2 && (
+                                                        <View className='bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
+                                                            <Text className='text-white text-xs font-medium'>
+                                                                +{property.facilities.length - 2} more
+                                                            </Text>
+                                                        </View>
+                                                    )}
+                                                </View>
+                                            ) : (
+                                                <View className='h-6' />
+                                            )}
+                                        </View>
                                     </View>
                                 </TouchableOpacity>
                             </MotiView>

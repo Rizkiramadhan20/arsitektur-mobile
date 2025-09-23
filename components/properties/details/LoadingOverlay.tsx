@@ -28,7 +28,7 @@ export default function LoadingOverlay({ title }: LoadingOverlayProps) {
             <View className='items-center'>
                 {/* Lottie animation */}
                 <View className='w-64 h-40 justify-center items-center'>
-                    <LottieView source={loading} autoPlay loop={false} style={{ width: 200, height: 120 }} />
+                    <LottieView source={loading} autoPlay loop={true} style={{ width: 200, height: 120 }} />
                 </View>
 
                 {/* Loading Text */}

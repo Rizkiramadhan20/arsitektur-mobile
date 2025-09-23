@@ -43,6 +43,19 @@ interface PropertyByTypeResponse {
     pagination: Pagination;
 }
 
+interface TypeFilterProps {
+    onOpenFilter: () => void
+    onReset: () => void
+    hasActiveFilters: boolean
+    provinces: string[]
+    cities: string[]
+    statuses: string[]
+}
+
+interface UseStateTypeProps {
+    type: string
+}
+
 //================== Property By Province ==================//
 interface PropertiesByProvinceResponse {
     statusCode: number;
@@ -86,4 +99,11 @@ interface PropertyDetailResponse {
     message: string;
     ok: boolean;
     data: PropertyDetail;
+}
+
+//================== Property By Search ==================//
+
+type UseStateSearchParams = {
+    initialQuery?: string
+    fetchProperties: (page: number) => Promise<{ data: Property[] }>
 }
