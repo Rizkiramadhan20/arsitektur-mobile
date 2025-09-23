@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Image, ScrollView, Text, TouchableOpacity, View, useWindowDimensions, Platform, Linking } from 'react-native'
+import { Image, ScrollView, Text, TouchableOpacity, View, Platform, Linking } from 'react-native'
 
 import Toast from 'react-native-toast-message'
 
@@ -24,15 +24,17 @@ import { collection, getDocs, limit, query, where } from 'firebase/firestore'
 
 import LoadingOverlay from '@/components/properties/details/LoadingOverlay'
 
+import PropertiesNotfound from "@/components/properties/details/PropertiesNotfound"
+
 export default function PropertiesDetails() {
     const router = useRouter()
-    const { slug, type, province } = useLocalSearchParams<{ slug: string; type: string; province: string }>()
+    const { slug, type, province, title } = useLocalSearchParams<{ slug: string; type: string; province: string; title?: string }>()
 
     const [data, setData] = useState<PropertyDetail | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const [error, setError] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<'description' | 'related' | 'facilities'>('description')
-    const { width: screenWidth } = useWindowDimensions()
+
     const [scrollY, setScrollY] = useState(0)
     const [showCallSheet, setShowCallSheet] = useState(false)
     const [showShareModal, setShowShareModal] = useState(false)
@@ -116,19 +118,13 @@ export default function PropertiesDetails() {
 
     if (loading) {
         return (
-            <LoadingOverlay />
+            <LoadingOverlay title={typeof title === 'string' ? title : undefined} />
         )
     }
 
     if (error || !data) {
         return (
-            <View className='flex-1 items-center justify-center bg-zinc-900 px-6'>
-                <Text className='text-white mb-3'>Tidak dapat memuat properti</Text>
-                <Text className='text-zinc-400 text-center'>{error}</Text>
-                <TouchableOpacity onPress={() => router.back()} className='mt-6 bg-accent-blue-600 px-5 py-3 rounded-xl'>
-                    <Text className='text-white font-semibold'>Kembali</Text>
-                </TouchableOpacity>
-            </View>
+            <PropertiesNotfound />
         )
     }
 
@@ -148,22 +144,26 @@ export default function PropertiesDetails() {
                 />
 
                 {/* Title and meta */}
-                <View className='px-4 pt-4 pb-3 border-b border-zinc-800'>
-                    <View className='flex-row items-center mb-2'>
-                        <Text className='bg-accent-blue-600 px-3 py-1 rounded-md text-white text-xs capitalize'>{data.type}</Text>
+                <View className='px-2 pt-4 pb-3 border-b border-zinc-800 flex flex-col gap-2'>
+                    <View className='flex-row items-center gap-2'>
+                        <Text className='bg-accent-blue-600 px-3 py-1 rounded-md text-white text-md capitalize'>{data.type}</Text>
+                        <View className='flex-row items-center bg-emerald-500/90 px-3 py-1 rounded-md border border-white/10'>
+                            <View className='w-2 h-2 bg-emerald-300 rounded-full mr-2' />
+                            <Text className='text-white text-md font-semibold capitalize'>{data.statusProject}</Text>
+                        </View>
                     </View>
-                    <Text className='text-white text-xl font-semibold'>{data.title}</Text>
-                    <Text className='text-zinc-400 mt-1'>{data.city}, {data.province}</Text>
+
+                    <Text className='text-white text-lg font-semibold mb-1'>{data.title}</Text>
+                    <Text className='text-zinc-400 text-sm mb-1'>{data.city}, {data.province}</Text>
                 </View>
 
                 {/* Facilities List */}
-                <View className='px-4 py-4 border-b border-zinc-800'>
+                <View className='px-2 py-4 border-b border-zinc-800'>
                     <View className='flex-row flex-wrap gap-3'>
                         {data.facilities.map((facility, idx) => (
                             <View
                                 key={idx}
-                                className='flex-row items-center bg-zinc-800 px-3 py-2 rounded-xl border border-zinc-700'
-                                style={{ width: (screenWidth - 16 * 2 - 12) / 2 }}
+                                className='flex-row items-center bg-zinc-800 px-3 py-2 rounded-xl border border-zinc-700 w-[48%]'
                             >
                                 {facility.imageUrl ? (
                                     <Image source={{ uri: facility.imageUrl }} className='w-10 h-10 rounded-full mr-2' resizeMode='cover' />
@@ -177,7 +177,7 @@ export default function PropertiesDetails() {
                 </View>
 
                 {/* Tabs */}
-                <View className='px-4 py-3 border-b border-zinc-800'>
+                <View className='px-2 py-3 border-b border-zinc-800'>
                     <View className='bg-zinc-800 rounded-2xl p-1 border border-zinc-700 flex-row items-center'>
                         <TouchableOpacity
                             onPress={() => setActiveTab('description')}
@@ -203,7 +203,7 @@ export default function PropertiesDetails() {
                 {/* Tab Content */}
                 {
                     activeTab === 'description' && (
-                        <View className='px-4'>
+                        <View className='px-2'>
                             {data.content ? (
                                 <View className='mt-2'>
                                     <MediaPlayet html={data.content} />
@@ -215,33 +215,65 @@ export default function PropertiesDetails() {
 
                 {
                     activeTab === 'related' && (
-                        <View className='px-4 py-4'>
-                            <Text className='text-white mb-3'>Related Properties</Text>
+                        <View className='px-2 mt-2'>
                             <View className='flex flex-col gap-3'>
-                                {data.related && data.related.length > 0 ? (
-                                    data.related.map((item) => (
-                                        <TouchableOpacity key={item.id} className='bg-zinc-800 rounded-2xl overflow-hidden border border-zinc-700'>
-                                            <View className='flex-row'>
-                                                <View className='w-32 h-24'>
-                                                    <Image source={item.thumbnail ? { uri: item.thumbnail } : require('../../assets/HomeScreen/img-2.jpg')} className='w-full h-full' resizeMode='cover' />
-                                                </View>
-                                                <View className='flex-1 p-3 justify-center'>
-                                                    <Text className='text-white font-semibold' numberOfLines={1}>{item.title}</Text>
-                                                    <Text className='text-zinc-400 text-xs mt-1' numberOfLines={1}>{item.city}, {item.province}</Text>
+                                {data.related.map((item) => (
+                                    <TouchableOpacity
+                                        key={item.id}
+                                        activeOpacity={0.9}
+                                        className='bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 shadow-lg'
+                                    >
+                                        <View className='flex-row'>
+                                            <View className='w-36 h-36 relative'>
+                                                <Image
+                                                    source={item.thumbnail ? { uri: item.thumbnail } : require('../../assets/HomeScreen/img-2.jpg')}
+                                                    className='w-full h-full'
+                                                    resizeMode='cover'
+                                                />
+                                                <View className='absolute inset-0 bg-black/20' />
+
+                                                <View className='absolute bottom-2 left-2 bg-accent-blue-600/90 px-2 py-1 rounded-md border border-white/20'>
+                                                    <Text className='text-white text-[10px] font-semibold capitalize'>{item.type}</Text>
                                                 </View>
                                             </View>
-                                        </TouchableOpacity>
-                                    ))
-                                ) : (
-                                    <Text className='text-zinc-400'>No related properties.</Text>
-                                )}
+
+                                            <View className='flex-1 p-3 justify-between'>
+                                                <View>
+                                                    <Text className='text-white font-semibold text-base mb-1' numberOfLines={1}>{item.title}</Text>
+                                                    <Text className='text-zinc-400 text-xs mt-1' numberOfLines={1}>📍{item.city}, {item.province}</Text>
+                                                </View>
+
+                                                {item.facilities && item.facilities.length > 0 && (
+                                                    <View className='flex-row flex-wrap gap-2 mt-2'>
+                                                        {item.facilities.slice(0, 2).map((facility, idx) => (
+                                                            <View key={idx} className='flex-row items-center bg-white/10 px-2 py-1 rounded-md border border-white/20'>
+                                                                {facility.imageUrl ? (
+                                                                    <Image source={{ uri: facility.imageUrl }} className='w-4 h-4 rounded-full mr-1' resizeMode='cover' />
+                                                                ) : (
+                                                                    <View className='w-2 h-2 rounded-full bg-white/30 mr-1' />
+                                                                )}
+                                                                <Text className='text-white text-[10px]'>{facility.title}</Text>
+                                                            </View>
+                                                        ))}
+
+                                                        {item.facilities.length > 2 && (
+                                                            <View className='bg-white/10 px-2 py-1 rounded-md border border-white/20'>
+                                                                <Text className='text-white text-[10px]'>+{item.facilities.length - 2} more</Text>
+                                                            </View>
+                                                        )}
+                                                    </View>
+                                                )}
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
+                                ))}
                             </View>
                         </View>
                     )
                 }
 
                 {/* Listing Agent */}
-                <View className='px-4 pb-12 pt-5'>
+                <View className='px-2 pb-12 pt-5'>
                     <View className='bg-zinc-800 rounded-2xl p-4 border border-zinc-700 flex-row items-center'>
                         <View className='h-12 w-12 rounded-full overflow-hidden bg-zinc-700 mr-4'>
                             {data.author?.photoURL ? (
@@ -272,26 +304,21 @@ export default function PropertiesDetails() {
 
             {/* Persistent sticky top actions overlay */}
             <BlurView
-                className='absolute top-0 left-0 right-0 z-50 py-2 pb-2'
+                className='absolute top-2 left-0 right-0 z-50 py-2 pb-2 rounded-b-3xl overflow-hidden bg-black/40'
                 tint='dark'
                 intensity={Math.floor(Math.min(scrollY / 120, 1) * 80)}
                 experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
-                style={{
-                    backgroundColor: `rgba(0,0,0,${Math.min(scrollY / 120, 1) * 0.4})`,
-                    borderBottomLeftRadius: 24,
-                    borderBottomRightRadius: 24,
-                    overflow: 'hidden'
-                }}
             >
                 <View className='mt-10 px-4 flex-row justify-between'>
-                    <TouchableOpacity onPress={() => router.back()} className='h-10 w-10 rounded-full items-center justify-center border border-white/10' style={{ backgroundColor: 'rgba(0,0,0,0.45)', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}>
+                    <TouchableOpacity onPress={() => router.back()} className='h-10 w-10 rounded-full items-center justify-center border border-white/10 bg-black/45 shadow-md'>
                         <Ionicons name='chevron-back' size={22} color={'#ffffff'} />
                     </TouchableOpacity>
+
                     <View className='flex-row gap-2'>
-                        <TouchableOpacity onPress={() => setShowShareModal(true)} className='h-10 w-10 rounded-full items-center justify-center border border-white/10' style={{ backgroundColor: 'rgba(0,0,0,0.45)', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}>
+                        <TouchableOpacity onPress={() => setShowShareModal(true)} className='h-10 w-10 rounded-full items-center justify-center border border-white/10 bg-black/45 shadow-md'>
                             <Ionicons name='share-outline' size={22} color={'#ffffff'} />
                         </TouchableOpacity>
-                        <TouchableOpacity className='h-10 w-10 rounded-full items-center justify-center border border-white/10' style={{ backgroundColor: 'rgba(0,0,0,0.45)', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 6, shadowOffset: { width: 0, height: 3 }, elevation: 3 }}>
+                        <TouchableOpacity className='h-10 w-10 rounded-full items-center justify-center border border-white/10 bg-black/45 shadow-md'>
                             <Ionicons name='heart-outline' size={22} color={'#ffffff'} />
                         </TouchableOpacity>
                     </View>
@@ -329,23 +356,24 @@ export default function PropertiesDetails() {
 
             {/* Fullscreen image overlay moved to page level */}
             {isFullscreen && (
-                <View className='absolute inset-0 z-50' style={{ backgroundColor: 'black' }}>
-                    <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => setFullscreenIndex((prev) => (prev + 1) % (data.images?.length || 1))}>
-                        <View style={{ flex: 1 }}>
+                <View className='absolute inset-0 z-50 bg-black'>
+                    <TouchableOpacity className='flex-1' activeOpacity={1} onPress={() => setFullscreenIndex((prev) => (prev + 1) % (data.images?.length || 1))}>
+                        <View className='flex-1'>
                             {data.images.map((uri, idx) => (
-                                <View key={idx} style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, opacity: fullscreenIndex === idx ? 1 : 0 }}>
-                                    <Image source={{ uri }} style={{ width: '100%', height: '100%' }} resizeMode='contain' />
+                                <View key={idx} className={`absolute inset-0 ${fullscreenIndex === idx ? 'opacity-100' : 'opacity-0'}`}>
+                                    <Image source={{ uri }} className='w-full h-full' resizeMode='contain' />
                                 </View>
                             ))}
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setIsFullscreen(false)} className='absolute top-10 right-4 h-10 w-10 rounded-full items-center justify-center' style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}>
+
+                    <TouchableOpacity onPress={() => setIsFullscreen(false)} className='absolute top-16 right-4 h-10 w-10 rounded-full items-center justify-center bg-black/45'>
                         <Ionicons name='close' size={22} color={'#ffffff'} />
                     </TouchableOpacity>
                     <View pointerEvents='none' className='absolute bottom-6 left-0 right-0 items-center'>
                         <View className='flex-row items-center justify-center'>
                             {data.images.map((_, i) => (
-                                <View key={i} className={`h-2 rounded-full mx-1 ${i === fullscreenIndex ? 'bg-white' : 'bg-white/40'}`} style={{ width: i === fullscreenIndex ? 16 : 6 }} />
+                                <View key={i} className={`h-2 rounded-full mx-1 ${i === fullscreenIndex ? 'bg-white w-4' : 'bg-white/40 w-1.5'}`} />
                             ))}
                         </View>
                     </View>

@@ -85,7 +85,7 @@ const YouTubeEmbed = ({ videoId }: { videoId: string }) => {
                     onPress={() => setIsPlaying(true)}
                     className='rounded-xl overflow-hidden border border-zinc-700'
                 >
-                    <View className='bg-black' style={{ aspectRatio: 16 / 9 }}>
+                    <View className='bg-black aspect-video'>
                         <Image source={{ uri: thumbnail }} className='w-full h-full' resizeMode='cover' />
                         <View className='absolute inset-0 items-center justify-center'>
                             <View className='h-14 w-14 rounded-full bg-black/60 items-center justify-center'>
@@ -99,7 +99,7 @@ const YouTubeEmbed = ({ videoId }: { videoId: string }) => {
     }
 
     return (
-        <View className='w-full mb-4 rounded-xl overflow-hidden border border-zinc-700' style={{ aspectRatio: 16 / 9 }}>
+        <View className='w-full mb-4 rounded-xl overflow-hidden border border-zinc-700 aspect-video'>
             <WebView
                 source={{ uri: embedUrl }}
                 allowsFullscreenVideo
@@ -108,7 +108,7 @@ const YouTubeEmbed = ({ videoId }: { videoId: string }) => {
                 domStorageEnabled
                 allowsInlineMediaPlayback
                 automaticallyAdjustContentInsets={false}
-                style={{ backgroundColor: 'black' }}
+                className='bg-black'
             />
         </View>
     )

@@ -101,6 +101,7 @@ export default function Index() {
         const query = new URLSearchParams({
             type: property.type,
             province: property.province,
+            title: property.title,
         }).toString()
         router.push(`/properties/${property.slug}?${query}`)
     }
@@ -117,8 +118,12 @@ export default function Index() {
         )
     }
 
+    const handleAllProperties = (() => {
+        router.push('/properties/all-properties')
+    })
+
     return (
-        <ScrollView className='flex-1' showsVerticalScrollIndicator={true}>
+        <ScrollView className='flex-1 bg-background' showsVerticalScrollIndicator={true}>
             <View className='pt-2 pb-6'>
                 {/* Header */}
                 <MotiView
@@ -145,7 +150,7 @@ export default function Index() {
                     transition={{ type: 'timing', duration: 600, delay: 500 }}
                     className='px-2 '
                 >
-                    <View className='mt-4 bg-zinc-900 rounded-2xl px-4 py-3 border border-zinc-800'>
+                    <View className='mt-4 bg-background rounded-2xl px-4 py-3 border border-zinc-800'>
                         <View className='flex-row items-center'>
                             <View className='h-9 w-9 rounded-xl bg-zinc-800 items-center justify-center mr-3'>
                                 <Text className='text-zinc-400'>🔍</Text>
@@ -196,7 +201,7 @@ export default function Index() {
                                     <Text className='text-blue-100 text-base mb-4 leading-5'>
                                         Discover exclusive properties with premium amenities and modern designs
                                     </Text>
-                                    <TouchableOpacity className='bg-white/20 px-6 py-3 rounded-xl border border-white/30 self-start'>
+                                    <TouchableOpacity className='bg-white/20 px-6 py-3 rounded-xl border border-white/30 self-start' onPress={handleAllProperties}>
                                         <Text className='text-white font-semibold'>Explore Now</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -333,7 +338,7 @@ export default function Index() {
                     <MotiView
                         from={{ opacity: 0, translateY: 20 }}
                         animate={{ opacity: 1, translateY: 0 }}
-                        transition={{ type: 'timing', duration: 600, delay: 500 }}
+                        transition={{ type: 'timing', duration: 600, delay: 300 }}
                     >
                         <View className='mb-6'>
                             {/* Main Header Row */}

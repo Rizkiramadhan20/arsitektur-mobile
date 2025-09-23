@@ -4,7 +4,6 @@ import {
     View,
     Text,
     TouchableOpacity,
-    StyleSheet,
     Image,
     StatusBar,
 } from 'react-native';
@@ -50,56 +49,56 @@ const PermissionScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView className="flex-1 bg-white">
             <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-            <View style={styles.content}>
+            <View className="flex-1 px-6 py-8">
                 {/* Header */}
-                <View style={styles.header}>
+                <View className="items-center mb-12">
                     <Image
                         source={require('@/assets/images/icon.png')}
-                        style={styles.logo}
+                        className="w-20 h-20 mb-6"
                         resizeMode="contain"
                     />
-                    <Text style={styles.title}>Selamat Datang!</Text>
-                    <Text style={styles.subtitle}>
+                    <Text className="text-2xl font-bold text-gray-800 mb-3">Selamat Datang!</Text>
+                    <Text className="text-base text-gray-500 text-center leading-6">
                         Untuk memberikan pengalaman terbaik, aplikasi memerlukan beberapa izin
                     </Text>
                 </View>
 
                 {/* Permission List */}
-                <View style={styles.permissionList}>
-                    <View style={styles.permissionItem}>
-                        <View style={styles.permissionIcon}>
+                <View className="mb-12">
+                    <View className="flex-row items-center py-4 px-4 bg-gray-50 rounded-xl mb-3">
+                        <View className="w-12 h-12 rounded-full bg-white items-center justify-center mr-4 shadow">
                             <Ionicons name="camera" size={24} color="#3B82F6" />
                         </View>
-                        <View style={styles.permissionText}>
-                            <Text style={styles.permissionTitle}>Kamera</Text>
-                            <Text style={styles.permissionDescription}>
+                        <View className="flex-1">
+                            <Text className="text-base font-semibold text-gray-800 mb-1">Kamera</Text>
+                            <Text className="text-sm text-gray-500 leading-5">
                                 Untuk mengambil foto properti dan dokumen
                             </Text>
                         </View>
                     </View>
 
-                    <View style={styles.permissionItem}>
-                        <View style={styles.permissionIcon}>
+                    <View className="flex-row items-center py-4 px-4 bg-gray-50 rounded-xl mb-3">
+                        <View className="w-12 h-12 rounded-full bg-white items-center justify-center mr-4 shadow">
                             <Ionicons name="location" size={24} color="#10B981" />
                         </View>
-                        <View style={styles.permissionText}>
-                            <Text style={styles.permissionTitle}>Lokasi</Text>
-                            <Text style={styles.permissionDescription}>
+                        <View className="flex-1">
+                            <Text className="text-base font-semibold text-gray-800 mb-1">Lokasi</Text>
+                            <Text className="text-sm text-gray-500 leading-5">
                                 Untuk menampilkan properti di sekitar Anda
                             </Text>
                         </View>
                     </View>
 
-                    <View style={styles.permissionItem}>
-                        <View style={styles.permissionIcon}>
+                    <View className="flex-row items-center py-4 px-4 bg-gray-50 rounded-xl mb-3">
+                        <View className="w-12 h-12 rounded-full bg-white items-center justify-center mr-4 shadow">
                             <Ionicons name="notifications" size={24} color="#F59E0B" />
                         </View>
-                        <View style={styles.permissionText}>
-                            <Text style={styles.permissionTitle}>Notifikasi</Text>
-                            <Text style={styles.permissionDescription}>
+                        <View className="flex-1">
+                            <Text className="text-base font-semibold text-gray-800 mb-1">Notifikasi</Text>
+                            <Text className="text-sm text-gray-500 leading-5">
                                 Untuk update properti dan pesan penting
                             </Text>
                         </View>
@@ -107,152 +106,33 @@ const PermissionScreen = () => {
                 </View>
 
                 {/* Action Buttons */}
-                <View style={styles.buttonContainer}>
+                <View className="mb-6">
                     <TouchableOpacity
-                        style={[styles.button, styles.primaryButton]}
+                        className="py-4 px-6 rounded-xl items-center mb-3 bg-blue-500 shadow-lg"
                         onPress={handleGrantPermissions}
                         disabled={loading}
                     >
-                        <Text style={styles.primaryButtonText}>
+                        <Text className="text-white text-base font-semibold">
                             {loading ? 'Meminta Izin...' : 'Izinkan Semua'}
                         </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        style={[styles.button, styles.secondaryButton]}
+                        className="py-4 px-6 rounded-xl items-center mb-3 border border-gray-300"
                         onPress={handleSkip}
                         disabled={loading}
                     >
-                        <Text style={styles.secondaryButtonText}>Lewati</Text>
+                        <Text className="text-gray-500 text-base font-medium">Lewati</Text>
                     </TouchableOpacity>
                 </View>
 
                 {/* Privacy Note */}
-                <Text style={styles.privacyNote}>
+                <Text className="text-xs text-gray-400 text-center leading-5">
                     Anda dapat mengubah izin ini kapan saja di pengaturan aplikasi
                 </Text>
             </View>
         </SafeAreaView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#ffffff',
-    },
-    content: {
-        flex: 1,
-        paddingHorizontal: 24,
-        paddingVertical: 32,
-    },
-    header: {
-        alignItems: 'center',
-        marginBottom: 48,
-    },
-    logo: {
-        width: 80,
-        height: 80,
-        marginBottom: 24,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1F2937',
-        marginBottom: 12,
-        textAlign: 'center',
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#6B7280',
-        textAlign: 'center',
-        lineHeight: 24,
-    },
-    permissionList: {
-        marginBottom: 48,
-    },
-    permissionItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 16,
-        backgroundColor: '#F9FAFB',
-        borderRadius: 12,
-        marginBottom: 12,
-    },
-    permissionIcon: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: '#ffffff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 16,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 1,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    permissionText: {
-        flex: 1,
-    },
-    permissionTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1F2937',
-        marginBottom: 4,
-    },
-    permissionDescription: {
-        fontSize: 14,
-        color: '#6B7280',
-        lineHeight: 20,
-    },
-    buttonContainer: {
-        marginBottom: 24,
-    },
-    button: {
-        paddingVertical: 16,
-        paddingHorizontal: 24,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginBottom: 12,
-    },
-    primaryButton: {
-        backgroundColor: '#3B82F6',
-        shadowColor: '#3B82F6',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    primaryButtonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    secondaryButton: {
-        backgroundColor: 'transparent',
-        borderWidth: 1,
-        borderColor: '#D1D5DB',
-    },
-    secondaryButtonText: {
-        color: '#6B7280',
-        fontSize: 16,
-        fontWeight: '500',
-    },
-    privacyNote: {
-        fontSize: 12,
-        color: '#9CA3AF',
-        textAlign: 'center',
-        lineHeight: 18,
-    },
-});
 
 export default PermissionScreen;

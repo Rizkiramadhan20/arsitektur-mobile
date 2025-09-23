@@ -11,7 +11,7 @@ module.exports = {
     extend: {
       colors: {
         // Background colors
-        background: "#000000",
+        background: "#18181b",
         card: "#18181b",
         "card-border": "#27272a",
 

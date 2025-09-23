@@ -47,22 +47,24 @@ export default function ImageSlider({ images, height = 288, onBack, autoplay = t
 
     return (
         <View style={{ height }} className='w-full relative bg-zinc-900' {...panResponder.panHandlers}>
-            <View style={{ width: screenWidth, height: '100%' }}>
+            <View className='h-full' style={{ width: screenWidth }}>
                 {data.map((uri, idx) => (
                     <MotiView
                         key={idx}
                         from={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: activeIndex === idx ? 1 : 0, scale: activeIndex === idx ? 1 : 0.98 }}
                         transition={{ type: 'timing', duration: 500 }}
-                        style={{ position: 'absolute', inset: 0 }}
+                        className='absolute inset-0'
                     >
                         <Pressable
-                            style={{ width: screenWidth, height: '100%' }}
+                            className='h-full'
+                            style={{ width: screenWidth }}
                             onPress={() => onImagePress?.(activeIndex)}
                         >
                             <Image
                                 source={{ uri }}
-                                style={{ width: screenWidth, height: '100%' }}
+                                className='h-full'
+                                style={{ width: screenWidth }}
                                 resizeMode='cover'
                             />
                         </Pressable>
@@ -76,8 +78,7 @@ export default function ImageSlider({ images, height = 288, onBack, autoplay = t
                     {data.map((_, i) => (
                         <View
                             key={i}
-                            className={`h-2 rounded-full mx-1 ${i === activeIndex ? 'bg-white' : 'bg-white/40'}`}
-                            style={{ width: i === activeIndex ? 16 : 6 }}
+                            className={`h-2 rounded-full mx-1 ${i === activeIndex ? 'bg-white w-4' : 'bg-white/40 w-1.5'}`}
                         />
                     ))}
                 </View>

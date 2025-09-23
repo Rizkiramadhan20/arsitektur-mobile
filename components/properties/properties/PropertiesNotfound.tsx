@@ -46,6 +46,7 @@ export default function PropertiesNotfound() {
                                     source={blobs}
                                     style={{ width: "100%", height: "100%" }}
                                     autoPlay
+                                    loop={false}
                                 />
                             </View>
                         </MotiView>
