@@ -14,6 +14,8 @@ import Toast from 'react-native-toast-message'
 
 import { API_CONFIG, getApiUrl, isApiAvailable } from '@/config/api/api'
 
+import { useTheme } from '@/context/ThemeProvider'
+
 interface TempUserData {
     uid: string
     email: string
@@ -28,6 +30,8 @@ export default function Verification() {
     const [resending, setResending] = useState(false)
     const inputs = [useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null), useRef<TextInput>(null)]
     const [tempUser, setTempUser] = useState<TempUserData | null>(null)
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
 
     useEffect(() => {
         (async () => {
@@ -93,26 +97,26 @@ export default function Verification() {
     }
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className='flex-1 bg-background'>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`}>
             <View className='px-4 pt-16 flex-1'>
                 <View className='flex-row items-center'>
                     <Pressable onPress={() => router.back()} className='p-2 -ml-2' accessibilityLabel='Go back'>
-                        <Ionicons name='chevron-back' size={24} color='#FFFFFF' />
+                        <Ionicons name='chevron-back' size={24} color={isDark ? '#FFFFFF' : '#000000'} />
                     </Pressable>
                     <View className='flex-1 items-center -ml-6'>
-                        <Text className='text-text-primary text-base font-semibold'>Verification Code</Text>
+                        <Text className={`${isDark ? 'text-text-primary' : 'text-gray-900'} text-base font-semibold`}>Verification Code</Text>
                     </View>
                     <View style={{ width: 24 }} />
                 </View>
 
                 <View className='mt-6'>
-                    <Text className='text-text-primary text-base font-semibold'>Enter the Verification Code.</Text>
-                    <Text className='text-text-secondary text-xs mt-1'>We have sent a verification code to your email.</Text>
+                    <Text className={`${isDark ? 'text-text-primary' : 'text-gray-900'} text-base font-semibold`}>Enter the Verification Code.</Text>
+                    <Text className={`${isDark ? 'text-text-secondary' : 'text-gray-500'} text-xs mt-1`}>We have sent a verification code to your email.</Text>
                 </View>
 
                 <View className='flex-row justify-between mt-6'>
                     {code.map((digit, idx) => (
-                        <View key={idx} className='w-16 h-16 border border-white/10 rounded-xl items-center justify-center'>
+                        <View key={idx} className={`w-16 h-16 border ${isDark ? 'border-white/10' : 'border-gray-300'} rounded-xl items-center justify-center`}>
                             <TextInput
                                 ref={inputs[idx]}
                                 value={digit}
@@ -121,8 +125,8 @@ export default function Verification() {
                                 keyboardType='number-pad'
                                 maxLength={1}
                                 placeholder=''
-                                placeholderTextColor='#7A7A7A'
-                                className='text-text-primary text-2xl text-center w-full h-full'
+                                placeholderTextColor={isDark ? '#7A7A7A' : '#9CA3AF'}
+                                className={`${isDark ? 'text-text-primary' : 'text-gray-900'} text-2xl text-center w-full h-full`}
                             />
                         </View>
                     ))}
@@ -134,11 +138,11 @@ export default function Verification() {
                     className='mt-6 bg-accent-blue-600 py-4 rounded-xl items-center'
                     accessibilityLabel='Continue'
                 >
-                    <Text className='text-text-primary font-semibold'>Continue</Text>
+                    <Text className={`${isDark ? 'text-text-primary' : 'text-white'} font-semibold`}>Continue</Text>
                 </Pressable>
 
                 <View className='mt-4 flex-row'>
-                    <Text className='text-text-secondary text-sm'>If you didn&apos;t receive the code?</Text>
+                    <Text className={`${isDark ? 'text-text-secondary' : 'text-gray-500'} text-sm`}>If you didn&apos;t receive the code?</Text>
                     <Pressable disabled={resending} onPress={resend} className='ml-1'>
                         <Text className='text-accent-blue-400 text-sm'>Resend</Text>
                     </Pressable>

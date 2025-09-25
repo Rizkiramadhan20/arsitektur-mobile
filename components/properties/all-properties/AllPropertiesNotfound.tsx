@@ -10,13 +10,18 @@ import LottieView from "lottie-react-native"
 
 import { Ionicons } from '@expo/vector-icons'
 
+import { useTheme } from '@/context/ThemeProvider'
+
 import blobs from "@/assets/Properties/mintenance.json"
 
 export default function PropertiesNotfound() {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
+
     return (
-        <View className="flex-1 bg-background">
+        <View className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`}>
             <LinearGradient
-                colors={['#000000', '#18181b', '#000000']}
+                colors={isDark ? ['#000000', '#18181b', '#000000'] : ['#f9fafb', '#ffffff', '#f9fafb']}
                 className="absolute inset-0"
             />
 
@@ -35,8 +40,8 @@ export default function PropertiesNotfound() {
                     className="w-full max-w-sm"
                 >
                     <LinearGradient
-                        colors={['#18181b', '#27272a', '#18181b']}
-                        className="rounded-3xl p-8 border border-zinc-800 shadow-2xl"
+                        colors={isDark ? ['#18181b', '#27272a', '#18181b'] : ['#ffffff', '#f9fafb', '#ffffff']}
+                        className={`rounded-3xl p-8 border ${isDark ? 'border-zinc-800' : 'border-gray-200'} shadow-2xl`}
                     >
                         {/* Illustration Container */}
                         <MotiView
@@ -68,19 +73,19 @@ export default function PropertiesNotfound() {
                             </View>
 
                             {/* Title */}
-                            <Text className="text-2xl font-bold text-text-primary text-center mb-3">
+                            <Text className={`text-2xl font-bold ${isDark ? 'text-text-primary' : 'text-gray-900'} text-center mb-3`}>
                                 Server Sedang Maintenance
                             </Text>
 
                             {/* Subtitle */}
-                            <Text className="text-base text-text-secondary text-center mb-6 leading-6">
+                            <Text className={`text-base ${isDark ? 'text-text-secondary' : 'text-gray-600'} text-center mb-6 leading-6`}>
                                 Kami sedang bekerja keras untuk meningkatkan pengalaman Anda. Kami akan kembali segera dengan sesuatu yang luar biasa!
                             </Text>
 
                             {/* Status Indicator */}
-                            <View className="flex-row items-center bg-zinc-800/50 rounded-full px-4 py-2 mb-6">
+                            <View className={`flex-row items-center ${isDark ? 'bg-zinc-800/50' : 'bg-gray-100/50'} rounded-full px-4 py-2 mb-6`}>
                                 <View className="w-2 h-2 bg-yellow-400 rounded-full mr-3 animate-pulse" />
-                                <Text className="text-sm text-text-tertiary font-medium">
+                                <Text className={`text-sm ${isDark ? 'text-text-tertiary' : 'text-gray-500'} font-medium`}>
                                     Perkiraan waktu: 2-4 jam
                                 </Text>
                             </View>

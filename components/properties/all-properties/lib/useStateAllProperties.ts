@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+
 import { fetchProperties } from '@/config/lib/FetchProperties'
 
 export const useStateAllProperties = () => {

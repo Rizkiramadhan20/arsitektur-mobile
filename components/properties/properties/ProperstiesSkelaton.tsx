@@ -1,9 +1,10 @@
 import React from 'react'
 import { View, ScrollView, DimensionValue } from 'react-native'
 import { MotiView } from 'moti'
+import { useTheme } from '@/context/ThemeProvider'
 
 // Skeleton component for shimmer effect
-const SkeletonBox = ({ width, height, className = '', delay = 0 }: { width: DimensionValue, height: DimensionValue, className?: string, delay?: number }) => (
+const SkeletonBox = ({ width, height, className = '', delay = 0, isDark = true }: { width: DimensionValue, height: DimensionValue, className?: string, delay?: number, isDark?: boolean }) => (
     <MotiView
         from={{ opacity: 0.3 }}
         animate={{ opacity: 0.7 }}
@@ -14,14 +15,17 @@ const SkeletonBox = ({ width, height, className = '', delay = 0 }: { width: Dime
             loop: true,
             repeatReverse: true,
         }}
-        className={`bg-zinc-800 rounded-lg ${className}`}
+        className={`${isDark ? 'bg-border-secondary' : 'bg-gray-200'} rounded-lg ${className}`}
         style={{ width, height }}
     />
 )
 
 export default function ProperstiesSkelaton() {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
+
     return (
-        <ScrollView className='flex-1' showsVerticalScrollIndicator={false}>
+        <ScrollView className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`} showsVerticalScrollIndicator={false}>
             <View className='pt-2 pb-6'>
                 {/* Header Skeleton */}
                 <MotiView
@@ -32,10 +36,10 @@ export default function ProperstiesSkelaton() {
                 >
                     <View className='flex-row items-center justify-between mt-2 px-4'>
                         <View>
-                            <SkeletonBox width={120} height={16} className="mb-2" />
-                            <SkeletonBox width={180} height={24} />
+                            <SkeletonBox width={120} height={16} className="mb-2" isDark={isDark} />
+                            <SkeletonBox width={180} height={24} isDark={isDark} />
                         </View>
-                        <SkeletonBox width={40} height={40} className="rounded-full" />
+                        <SkeletonBox width={40} height={40} className="rounded-full" isDark={isDark} />
                     </View>
                 </MotiView>
 
@@ -46,11 +50,11 @@ export default function ProperstiesSkelaton() {
                     transition={{ type: 'timing', duration: 600, delay: 200 }}
                     className='px-4'
                 >
-                    <View className='mt-4 bg-zinc-900 rounded-2xl px-4 py-3 border border-zinc-800'>
+                    <View className={`mt-4 ${isDark ? 'bg-card border-card-border' : 'bg-white border-gray-200'} rounded-2xl px-4 py-3 border`}>
                         <View className='flex-row items-center'>
-                            <SkeletonBox width={36} height={36} className="rounded-xl mr-3" />
-                            <SkeletonBox width={200} height={20} className="flex-1" />
-                            <SkeletonBox width={40} height={40} className="rounded-xl ml-3" />
+                            <SkeletonBox width={36} height={36} className="rounded-xl mr-3" isDark={isDark} />
+                            <SkeletonBox width={200} height={20} className="flex-1" isDark={isDark} />
+                            <SkeletonBox width={40} height={40} className="rounded-xl ml-3" isDark={isDark} />
                         </View>
                     </View>
                 </MotiView>
@@ -62,31 +66,31 @@ export default function ProperstiesSkelaton() {
                     transition={{ type: 'timing', duration: 600, delay: 400 }}
                     className='px-4'
                 >
-                    <View className='mt-4 rounded-2xl p-6 bg-zinc-800 border border-zinc-700'>
+                    <View className={`mt-4 rounded-2xl p-6 ${isDark ? 'bg-card border-card-border' : 'bg-white border-gray-200'} border`}>
                         <View className='flex-row items-center justify-between'>
                             <View className='flex-1'>
-                                <SkeletonBox width={200} height={24} className="mb-2" />
-                                <SkeletonBox width={280} height={16} className="mb-4" />
-                                <SkeletonBox width={120} height={40} className="rounded-xl" />
+                                <SkeletonBox width={200} height={24} className="mb-2" isDark={isDark} />
+                                <SkeletonBox width={280} height={16} className="mb-4" isDark={isDark} />
+                                <SkeletonBox width={120} height={40} className="rounded-xl" isDark={isDark} />
                             </View>
                             <View className='ml-4'>
-                                <SkeletonBox width={80} height={80} className="rounded-2xl" />
+                                <SkeletonBox width={80} height={80} className="rounded-2xl" isDark={isDark} />
                             </View>
                         </View>
 
                         {/* Stats Row Skeleton */}
                         <View className='flex-row mt-6 space-x-6'>
                             <View className='flex-1'>
-                                <SkeletonBox width={60} height={20} className="mb-1" />
-                                <SkeletonBox width={80} height={14} />
+                                <SkeletonBox width={60} height={20} className="mb-1" isDark={isDark} />
+                                <SkeletonBox width={80} height={14} isDark={isDark} />
                             </View>
                             <View className='flex-1'>
-                                <SkeletonBox width={40} height={20} className="mb-1" />
-                                <SkeletonBox width={60} height={14} />
+                                <SkeletonBox width={40} height={20} className="mb-1" isDark={isDark} />
+                                <SkeletonBox width={60} height={14} isDark={isDark} />
                             </View>
                             <View className='flex-1'>
-                                <SkeletonBox width={60} height={20} className="mb-1" />
-                                <SkeletonBox width={100} height={14} />
+                                <SkeletonBox width={60} height={20} className="mb-1" isDark={isDark} />
+                                <SkeletonBox width={100} height={14} isDark={isDark} />
                             </View>
                         </View>
                     </View>
@@ -107,7 +111,7 @@ export default function ProperstiesSkelaton() {
                                 animate={{ opacity: 1, translateX: 0 }}
                                 transition={{ type: 'timing', duration: 500, delay: 600 + (index * 75) }}
                             >
-                                <SkeletonBox width={100} height={36} className="rounded-xl" delay={index * 100} />
+                                <SkeletonBox width={100} height={36} className="rounded-xl" delay={index * 100} isDark={isDark} />
                             </MotiView>
                         ))}
                     </ScrollView>
@@ -127,8 +131,8 @@ export default function ProperstiesSkelaton() {
                                 animate={{ opacity: 1, translateX: 0 }}
                                 transition={{ type: 'timing', duration: 500, delay: 800 + (index * 75) }}
                             >
-                                <View className='mr-4 w-80 h-64 rounded-2xl bg-zinc-800 border border-zinc-700 overflow-hidden'>
-                                    <SkeletonBox width="100%" height="100%" delay={index * 100} />
+                                <View className={`mr-4 w-80 h-64 rounded-2xl ${isDark ? 'bg-card border-card-border' : 'bg-white border-gray-200'} border overflow-hidden`}>
+                                    <SkeletonBox width="100%" height="100%" delay={index * 100} isDark={isDark} />
                                 </View>
                             </MotiView>
                         ))}
@@ -145,13 +149,13 @@ export default function ProperstiesSkelaton() {
                     >
                         <View className='flex-row items-center justify-between mb-6'>
                             <View className='flex-row items-center'>
-                                <SkeletonBox width={4} height={24} className="rounded-full mr-3" />
+                                <SkeletonBox width={4} height={24} className="rounded-full mr-3" isDark={isDark} />
                                 <View>
-                                    <SkeletonBox width={120} height={20} className="mb-1" />
-                                    <SkeletonBox width={200} height={14} />
+                                    <SkeletonBox width={120} height={20} className="mb-1" isDark={isDark} />
+                                    <SkeletonBox width={200} height={14} isDark={isDark} />
                                 </View>
                             </View>
-                            <SkeletonBox width={100} height={36} className="rounded-xl" />
+                            <SkeletonBox width={100} height={36} className="rounded-xl" isDark={isDark} />
                         </View>
                     </MotiView>
 
@@ -164,20 +168,20 @@ export default function ProperstiesSkelaton() {
                                 animate={{ opacity: 1, translateY: 0 }}
                                 transition={{ type: 'timing', duration: 500, delay: 1200 + (index * 75) }}
                             >
-                                <View className='bg-zinc-800 rounded-2xl border border-zinc-700 overflow-hidden'>
+                                <View className={`${isDark ? 'bg-card border-card-border' : 'bg-white border-gray-200'} rounded-2xl border overflow-hidden`}>
                                     <View className='flex-row'>
                                         {/* Image Section Skeleton */}
-                                        <SkeletonBox width={160} height={160} delay={index * 100} />
+                                        <SkeletonBox width={160} height={160} delay={index * 100} isDark={isDark} />
 
                                         {/* Text Details Section Skeleton */}
                                         <View className='flex-1 p-4 justify-between'>
-                                            <SkeletonBox width="80%" height={20} className="mb-2" delay={index * 100 + 50} />
-                                            <SkeletonBox width="60%" height={14} className="mb-3" delay={index * 100 + 100} />
+                                            <SkeletonBox width="80%" height={20} className="mb-2" delay={index * 100 + 50} isDark={isDark} />
+                                            <SkeletonBox width="60%" height={14} className="mb-3" delay={index * 100 + 100} isDark={isDark} />
 
                                             {/* Facilities Skeleton */}
                                             <View className='flex-row flex-wrap gap-2'>
-                                                <SkeletonBox width={60} height={24} className="rounded-lg" delay={index * 100 + 150} />
-                                                <SkeletonBox width={80} height={24} className="rounded-lg" delay={index * 100 + 200} />
+                                                <SkeletonBox width={60} height={24} className="rounded-lg" delay={index * 100 + 150} isDark={isDark} />
+                                                <SkeletonBox width={80} height={24} className="rounded-lg" delay={index * 100 + 200} isDark={isDark} />
                                             </View>
                                         </View>
                                     </View>

@@ -1,36 +1,25 @@
 import React, { useEffect, useState } from 'react'
-
 import { Image, ScrollView, Text, TouchableOpacity, View, Platform, Linking } from 'react-native'
-
 import Toast from 'react-native-toast-message'
-
 import { BlurView } from 'expo-blur'
-
 import { Ionicons } from '@expo/vector-icons'
-
 import MediaPlayer from '@/components/properties/details/media/MediaPlayer'
-
 import ImageSlider from '@/components/properties/details/media/ImageSlider'
-
 import ModalImages from '@/components/properties/details/media/ModalImages'
-
 import ShareModal from '@/components/properties/details/social-media/ShareModal'
-
 import { useLocalSearchParams, useRouter } from 'expo-router'
-
 import { fetchPropertiesBySlug } from '@/config/lib/FetchProperties'
-
 import { db } from '@/config/firebase/Firebase'
-
 import { collection, getDocs, limit, query, where } from 'firebase/firestore'
-
 import LoadingOverlay from '@/components/properties/details/LoadingOverlay'
-
 import PropertiesNotfound from "@/components/properties/details/PropertiesNotfound"
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function PropertiesDetails() {
     const router = useRouter()
     const { slug, type, province, title } = useLocalSearchParams<{ slug: string; type: string; province: string; title?: string }>()
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
 
     const [data, setData] = useState<PropertyDetail | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
@@ -131,7 +120,7 @@ export default function PropertiesDetails() {
     }
 
     return (
-        <View className='flex-1 bg-zinc-900'>
+        <View className={`flex-1 ${isDark ? 'bg-zinc-900' : 'bg-gray-50'}`}>
             <ScrollView
                 className='flex-1'
                 showsVerticalScrollIndicator={false}
@@ -146,7 +135,7 @@ export default function PropertiesDetails() {
                 />
 
                 {/* Title and meta */}
-                <View className='px-2 pt-4 pb-3 border-b border-zinc-800 flex flex-col gap-2'>
+                <View className={`px-2 pt-4 pb-3 border-b ${isDark ? 'border-zinc-800' : 'border-gray-200'} flex flex-col gap-2`}>
                     <View className='flex-row items-center gap-2'>
                         <TouchableOpacity className='bg-accent-blue-600 px-3 py-1 rounded-md text-white text-md capitalize' onPress={() => router.push(`/properties/type/${data.type}?title=${encodeURIComponent(data.title)}`)}>
                             <Text className='text-white text-md capitalize'>{data.type}</Text>
@@ -157,38 +146,38 @@ export default function PropertiesDetails() {
                         </View>
                     </View>
 
-                    <Text className='text-white text-lg font-semibold mb-1'>{data.title}</Text>
-                    <Text className='text-zinc-400 text-sm mb-1'>{data.city}, {data.province}</Text>
+                    <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-lg font-semibold mb-1`}>{data.title}</Text>
+                    <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-sm mb-1`}>{data.city}, {data.province}</Text>
                 </View>
 
                 {/* Facilities List */}
-                <View className='px-2 py-4 border-b border-zinc-800'>
+                <View className={`px-2 py-4 border-b ${isDark ? 'border-zinc-800' : 'border-gray-200'}`}>
                     <View className='flex-row flex-wrap gap-3'>
                         {data.facilities.map((facility, idx) => (
                             <View
                                 key={idx}
-                                className='flex-row items-center bg-zinc-800 px-3 py-2 rounded-xl border border-zinc-700 w-[48%]'
+                                className={`flex-row items-center ${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'} px-3 py-2 rounded-xl border w-[48%]`}
                             >
                                 {facility.imageUrl ? (
                                     <Image source={{ uri: facility.imageUrl }} className='w-10 h-10 rounded-full mr-2' resizeMode='cover' />
                                 ) : (
-                                    <View className='w-3 h-3 rounded-full bg-white/30 mr-2' />
+                                    <View className={`w-3 h-3 rounded-full ${isDark ? 'bg-white/30' : 'bg-gray-400/30'} mr-2`} />
                                 )}
-                                <Text className='text-white text-base'>{facility.title}</Text>
+                                <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-base`}>{facility.title}</Text>
                             </View>
                         ))}
                     </View>
                 </View>
 
                 {/* Tabs */}
-                <View className='px-2 py-3 border-b border-zinc-800'>
-                    <View className='bg-zinc-800 rounded-2xl p-1 border border-zinc-700 flex-row items-center'>
+                <View className={`px-2 py-3 border-b ${isDark ? 'border-zinc-800' : 'border-gray-200'}`}>
+                    <View className={`${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'} rounded-2xl p-1 border flex-row items-center`}>
                         <TouchableOpacity
                             onPress={() => setActiveTab('description')}
                             className={`flex-1 py-3 rounded-xl items-center ${activeTab === 'description' ? 'bg-accent-blue-600' : ''}`}
                             activeOpacity={0.8}
                         >
-                            <Text className={activeTab === 'description' ? 'text-white font-semibold' : 'text-zinc-300'}>
+                            <Text className={activeTab === 'description' ? 'text-white font-semibold' : (isDark ? 'text-zinc-300' : 'text-gray-600')}>
                                 Description
                             </Text>
                         </TouchableOpacity>
@@ -197,7 +186,7 @@ export default function PropertiesDetails() {
                             className={`flex-1 py-3 rounded-xl items-center ${activeTab === 'related' ? 'bg-accent-blue-600' : ''}`}
                             activeOpacity={0.8}
                         >
-                            <Text className={activeTab === 'related' ? 'text-white font-semibold' : 'text-zinc-300'}>
+                            <Text className={activeTab === 'related' ? 'text-white font-semibold' : (isDark ? 'text-zinc-300' : 'text-gray-600')}>
                                 Related
                             </Text>
                         </TouchableOpacity>
@@ -225,7 +214,7 @@ export default function PropertiesDetails() {
                                     <TouchableOpacity
                                         key={item.id}
                                         activeOpacity={0.9}
-                                        className='bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 shadow-lg'
+                                        className={`${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-200'} rounded-2xl overflow-hidden border shadow-lg`}
                                         onPress={() => router.push(`/properties/${item.slug}?type=${item.type}&province=${item.province}&title=${encodeURIComponent(item.title)}`)}
                                     >
                                         <View className='flex-row'>
@@ -244,25 +233,25 @@ export default function PropertiesDetails() {
 
                                             <View className='flex-1 p-3 justify-between'>
                                                 <View>
-                                                    <Text className='text-white font-semibold text-base mb-1' numberOfLines={1}>{item.title}</Text>
-                                                    <Text className='text-zinc-400 text-xs mt-1' numberOfLines={1}>📍{item.city}, {item.province}</Text>
+                                                    <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base mb-1`} numberOfLines={1}>{item.title}</Text>
+                                                    <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs mt-1`} numberOfLines={1}>📍{item.city}, {item.province}</Text>
                                                 </View>
 
                                                 <View className='flex-row flex-wrap gap-2 mt-2'>
                                                     {item.facilities.slice(0, 2).map((facility, idx) => (
-                                                        <View key={idx} className='flex-row items-center bg-white/10 px-2 py-1 rounded-md border border-white/20'>
+                                                        <View key={idx} className={`flex-row items-center ${isDark ? 'bg-white/10 border-white/20' : 'bg-gray-100 border-gray-300'} px-2 py-1 rounded-md border`}>
                                                             {facility.imageUrl ? (
                                                                 <Image source={{ uri: facility.imageUrl }} className='w-4 h-4 rounded-full mr-1' resizeMode='cover' />
                                                             ) : (
-                                                                <View className='w-2 h-2 rounded-full bg-white/30 mr-1' />
+                                                                <View className={`w-2 h-2 rounded-full ${isDark ? 'bg-white/30' : 'bg-gray-400/30'} mr-1`} />
                                                             )}
-                                                            <Text className='text-white text-[10px]'>{facility.title}</Text>
+                                                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-[10px]`}>{facility.title}</Text>
                                                         </View>
                                                     ))}
 
                                                     {item.facilities.length > 2 && (
-                                                        <View className='bg-white/10 px-2 py-1 rounded-md border border-white/20'>
-                                                            <Text className='text-white text-[10px]'>+{item.facilities.length - 2} more</Text>
+                                                        <View className={`${isDark ? 'bg-white/10 border-white/20' : 'bg-gray-100 border-gray-300'} px-2 py-1 rounded-md border`}>
+                                                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-[10px]`}>+{item.facilities.length - 2} more</Text>
                                                         </View>
                                                     )}
                                                 </View>
@@ -277,19 +266,19 @@ export default function PropertiesDetails() {
 
                 {/* Listing Agent */}
                 <View className='px-2 pb-12 pt-5'>
-                    <View className='bg-zinc-800 rounded-2xl p-4 border border-zinc-700 flex-row items-center'>
-                        <View className='h-12 w-12 rounded-full overflow-hidden bg-zinc-700 mr-4'>
+                    <View className={`${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'} rounded-2xl p-4 border flex-row items-center`}>
+                        <View className={`h-12 w-12 rounded-full overflow-hidden ${isDark ? 'bg-zinc-700' : 'bg-gray-200'} mr-4`}>
                             {data.author?.photoURL ? (
                                 <Image source={{ uri: data.author.photoURL }} className='h-full w-full' />
                             ) : (
                                 <View className='h-full w-full items-center justify-center'>
-                                    <Ionicons name='person-circle-outline' size={28} color={'#ffffff'} />
+                                    <Ionicons name='person-circle-outline' size={28} color={isDark ? '#ffffff' : '#6b7280'} />
                                 </View>
                             )}
                         </View>
                         <View className='flex-1'>
-                            <Text className='text-white font-semibold'>{data.author?.name || 'Agent'}</Text>
-                            <Text className='text-zinc-400 text-xs'>{data.author?.role || 'Agent'}</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`}>{data.author?.name || 'Agent'}</Text>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`}>{data.author?.role || 'Agent'}</Text>
                         </View>
                         <View className='flex-row items-center gap-2'>
                             <TouchableOpacity className='bg-accent-blue-600 px-3 py-2 rounded-xl flex-row items-center gap-2'>
@@ -307,22 +296,22 @@ export default function PropertiesDetails() {
 
             {/* Persistent sticky top actions overlay */}
             <BlurView
-                className='absolute top-0 left-0 right-0 z-50 py-2 pb-2 rounded-b-3xl overflow-hidden bg-black/40'
-                tint='dark'
+                className={`absolute top-0 left-0 right-0 z-50 py-2 pb-2 rounded-b-3xl overflow-hidden ${isDark ? 'bg-black/40' : 'bg-white/40'}`}
+                tint={isDark ? 'dark' : 'light'}
                 intensity={Math.floor(Math.min(scrollY / 120, 1) * 80)}
                 experimentalBlurMethod={Platform.OS === 'android' ? 'dimezisBlurView' : undefined}
             >
                 <View className='mt-10 px-4 flex-row justify-between'>
-                    <TouchableOpacity onPress={() => router.back()} className='h-10 w-10 rounded-full items-center justify-center border border-white/10 bg-black/45 shadow-md'>
-                        <Ionicons name='chevron-back' size={22} color={'#ffffff'} />
+                    <TouchableOpacity onPress={() => router.back()} className={`h-10 w-10 rounded-full items-center justify-center border ${isDark ? 'border-white/10 bg-black/45' : 'border-gray-300/20 bg-white/45'} shadow-md`}>
+                        <Ionicons name='chevron-back' size={22} color={isDark ? '#ffffff' : '#000000'} />
                     </TouchableOpacity>
 
                     <View className='flex-row gap-2'>
-                        <TouchableOpacity onPress={() => setShowShareModal(true)} className='h-10 w-10 rounded-full items-center justify-center border border-white/10 bg-black/45 shadow-md'>
-                            <Ionicons name='share-outline' size={22} color={'#ffffff'} />
+                        <TouchableOpacity onPress={() => setShowShareModal(true)} className={`h-10 w-10 rounded-full items-center justify-center border ${isDark ? 'border-white/10 bg-black/45' : 'border-gray-300/20 bg-white/45'} shadow-md`}>
+                            <Ionicons name='share-outline' size={22} color={isDark ? '#ffffff' : '#000000'} />
                         </TouchableOpacity>
-                        <TouchableOpacity className='h-10 w-10 rounded-full items-center justify-center border border-white/10 bg-black/45 shadow-md'>
-                            <Ionicons name='heart-outline' size={22} color={'#ffffff'} />
+                        <TouchableOpacity className={`h-10 w-10 rounded-full items-center justify-center border ${isDark ? 'border-white/10 bg-black/45' : 'border-gray-300/20 bg-white/45'} shadow-md`}>
+                            <Ionicons name='heart-outline' size={22} color={isDark ? '#ffffff' : '#000000'} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -337,14 +326,14 @@ export default function PropertiesDetails() {
                         onPress={() => setShowCallSheet(false)}
                     />
                     <View className='absolute left-0 right-0 bottom-0 px-4 pb-12 pt-2'>
-                        <View className='bg-zinc-800 border border-zinc-700 rounded-2xl overflow-hidden'>
+                        <View className={`${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'} border rounded-2xl overflow-hidden`}>
                             <TouchableOpacity onPress={callNow} activeOpacity={0.9} className='px-4 py-4 flex-row items-center gap-2'>
                                 <Ionicons name='call-outline' size={20} color={'#6aa6ff'} />
                                 <Text className='text-accent-blue-400 font-semibold'>Call {data?.author?.phone || ''}</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={() => setShowCallSheet(false)} activeOpacity={0.9} className='mt-2 bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-4 items-center'>
-                            <Text className='text-zinc-200 font-semibold'>Cancel</Text>
+                        <TouchableOpacity onPress={() => setShowCallSheet(false)} activeOpacity={0.9} className={`mt-2 ${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'} border rounded-2xl px-4 py-4 items-center`}>
+                            <Text className={`${isDark ? 'text-zinc-200' : 'text-gray-700'} font-semibold`}>Cancel</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

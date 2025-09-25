@@ -1,9 +1,11 @@
 import { useAuth } from '@/context/AuthContext';
+
 import { usePermissions } from '@/context/PermissionContext';
 
 import { router, usePathname } from 'expo-router';
 
 import { useEffect, useRef } from 'react';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Index() {
@@ -27,11 +29,9 @@ export default function Index() {
           router.replace('/permissions');
           await AsyncStorage.setItem('is_first_time', 'false');
         } else if (hasVisitedAuth === 'true') {
-          // User has already visited auth page before (login or skip)
           hasRedirected.current = true;
           router.replace('/(tabs)/properties');
         } else {
-          // User needs to go through auth flow (permissions already handled or not needed)
           hasRedirected.current = true;
           router.replace('/auth');
         }

@@ -1,17 +1,15 @@
 import React, { useState } from 'react'
-
 import { Text, View, TextInput, Pressable, ScrollView } from 'react-native'
-
 import { Ionicons } from '@expo/vector-icons'
-
 import { router } from 'expo-router'
-
 import { useAuth } from '@/context/AuthContext'
-
 import { MotiView } from 'moti'
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function SignUpScreen() {
     const { register, loading } = useAuth()
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
 
     const [displayName, setDisplayName] = useState('')
     const [email, setEmail] = useState('')

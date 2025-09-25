@@ -1,18 +1,12 @@
 import React, { useState } from 'react'
-
 import { Pressable, View, Text, Image } from 'react-native'
-
 import { router } from 'expo-router'
-
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
 import { MotiView } from 'moti'
-
 import img1 from "@/assets/HomeScreen/img-1.jpg"
-
 import img2 from "@/assets/HomeScreen/img-2.jpg"
-
 import img3 from "@/assets/HomeScreen/img-3.jpg"
+import { useTheme } from '@/context/ThemeProvider'
 
 const slides = [
     {
@@ -34,6 +28,8 @@ const slides = [
 
 export default function AuthIndexScreen() {
     const [slideIndex, setSlideIndex] = useState(0)
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
 
     const isLastSlide = slideIndex >= slides.length - 1
     const current = slides[slideIndex]

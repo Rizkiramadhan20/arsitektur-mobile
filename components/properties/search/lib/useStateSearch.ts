@@ -4,6 +4,8 @@ import { TextInput } from 'react-native'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
+import { router } from 'expo-router'
+
 export function useStateSearch(params: UseStateSearchParams) {
     const { initialQuery = '', fetchProperties } = params
 
@@ -77,7 +79,7 @@ export function useStateSearch(params: UseStateSearchParams) {
     }
 
     const handlePropertyClick = (property: Property) => {
-        // placeholder for navigation/analytics
+        router.push(`/properties/${property.slug}?type=${property.type}&province=${property.province}&title=${encodeURIComponent(property.title)}`)
     }
 
     useEffect(() => {

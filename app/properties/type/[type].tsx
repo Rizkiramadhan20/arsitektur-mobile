@@ -1,25 +1,14 @@
 import React from 'react'
-
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native'
-
 import { useRouter, useLocalSearchParams } from 'expo-router'
-
 import { Ionicons } from '@expo/vector-icons'
-
 import { SafeAreaView } from 'react-native-safe-area-context'
-
 import { MotiView } from 'moti'
-
 import TypeNotFound from '@/components/properties/type/TypeNotFound'
-
 import TypeSkeleton from '@/components/properties/type/TypeSkeleton'
-
 import TypeFilter from '@/components/properties/type/TypeFilter'
-
 import FilterModal from '@/components/properties/all-properties/modal/FilterModal'
-
 import AllPropertiesCard from '@/components/properties/all-properties/card/AllPropertiesCard'
-
 import { useStateType } from '@/components/properties/type/lib/useStateType'
 
 export default function TypePage() {
@@ -77,10 +66,10 @@ export default function TypePage() {
                     transition={{ type: 'timing', duration: 450 }}
                 >
                     <View className='flex-row items-center justify-between mt-2 mb-2'>
-                        <TouchableOpacity onPress={() => router.back()} className='h-10 w-10 rounded-full items-center justify-center border border-zinc-800 bg-zinc-900'>
+                        <TouchableOpacity onPress={() => router.back()} className='h-10 w-10 rounded-full items-center justify-center border bg-card border-card-border'>
                             <Ionicons name='chevron-back' size={22} color={'#ffffff'} />
                         </TouchableOpacity>
-                        <Text className='text-white text-lg font-semibold capitalize'>{type} Properties</Text>
+                        <Text className='text-primary text-lg font-semibold capitalize'>{type} Properties</Text>
                         <View className='h-10 w-10' />
                     </View>
                 </MotiView>
@@ -90,15 +79,15 @@ export default function TypePage() {
                     animate={{ opacity: 1, translateY: 0 }}
                     transition={{ type: 'timing', duration: 450, delay: 150 }}
                 >
-                    <View className='mt-2 bg-background rounded-2xl px-4 py-3 border border-zinc-800'>
+                    <View className='mt-2 bg-background rounded-2xl px-4 py-3 border border-card-border'>
                         <View className='flex-row items-center'>
-                            <View className='h-9 w-9 rounded-xl bg-zinc-800 items-center justify-center mr-3'>
-                                <Text className='text-zinc-400'>🔍</Text>
+                            <View className='h-9 w-9 rounded-xl bg-card border border-card-border items-center justify-center mr-3'>
+                                <Text className='text-secondary'>🔍</Text>
                             </View>
                             <TextInput
                                 placeholder='Search by Address, City, or ZIP'
                                 placeholderTextColor="#6b7280"
-                                className='flex-1 text-white'
+                                className='flex-1 text-primary'
                                 value={searchQuery}
                                 onChangeText={setSearchQuery}
                                 onSubmitEditing={() => {
@@ -141,7 +130,7 @@ export default function TypePage() {
                 onRefresh={onRefresh}
                 ListFooterComponent={isLoadingMore ? (
                     <View className='px-2 py-4'>
-                        <Text className='text-center text-zinc-400'>Loading more...</Text>
+                        <Text className='text-center text-secondary'>Loading more...</Text>
                     </View>
                 ) : null}
                 ListEmptyComponent={!loading ? (

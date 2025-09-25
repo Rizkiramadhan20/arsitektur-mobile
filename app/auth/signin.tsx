@@ -1,19 +1,17 @@
 import React, { useState } from 'react'
-
 import { Text, View, TextInput, Pressable, ScrollView } from 'react-native'
-
 import { router } from 'expo-router'
-
 import { Ionicons } from '@expo/vector-icons'
-
 import AsyncStorage from '@react-native-async-storage/async-storage'
-
 import { MotiView } from 'moti'
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function SignInScreen() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
 
     const handleSignIn = async () => {
         setIsLoading(true)
@@ -31,7 +29,7 @@ export default function SignInScreen() {
     }
 
     return (
-        <ScrollView className='flex-1 bg-background' contentContainerStyle={{ paddingBottom: 24 }}>
+        <ScrollView className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`} contentContainerStyle={{ paddingBottom: 24 }}>
             <View className='px-4 pt-16 flex flex-col h-screen justify-between'>
                 <View className='flex flex-col gap-4'>
                     <MotiView
@@ -39,7 +37,7 @@ export default function SignInScreen() {
                         animate={{ opacity: 1, translateY: 0 }}
                         transition={{ type: 'timing', duration: 600 }}
                     >
-                        <Text className='text-text-primary text-5xl font-bold mt-10'>Welcome to</Text>
+                        <Text className={`${isDark ? 'text-text-primary' : 'text-gray-900'} text-5xl font-bold mt-10`}>Welcome to</Text>
                     </MotiView>
 
                     <MotiView
@@ -47,7 +45,7 @@ export default function SignInScreen() {
                         animate={{ opacity: 1, translateY: 0 }}
                         transition={{ type: 'timing', duration: 600, delay: 200 }}
                     >
-                        <Text className='text-text-primary text-5xl font-bold mt-1'>Homz</Text>
+                        <Text className={`${isDark ? 'text-text-primary' : 'text-gray-900'} text-5xl font-bold mt-1`}>Homz</Text>
                     </MotiView>
 
                     <MotiView

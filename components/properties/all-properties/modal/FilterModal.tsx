@@ -1,27 +1,7 @@
 import React from 'react'
-
 import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-
 import { MotiView } from 'moti'
-
-type FilterModalProps = {
-    visible: boolean
-    onClose: () => void
-    types: string[]
-    statuses: string[]
-    provinces: string[]
-    cities: string[]
-    selectedType: string | null
-    selectedStatus: string | null
-    selectedProvince: string | null
-    selectedCity: string | null
-    onSelectType: (t: string | null) => void
-    onSelectStatus: (s: string | null) => void
-    onSelectProvince: (p: string | null) => void
-    onSelectCity: (c: string | null) => void
-    onReset: () => void
-    onApply?: () => void
-}
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function FilterModal({
     visible,
@@ -41,6 +21,8 @@ export default function FilterModal({
     onReset,
     onApply,
 }: FilterModalProps) {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
     return (
         <Modal visible={visible} transparent animationType='none' onRequestClose={onClose}>
             <TouchableOpacity activeOpacity={1} className='flex-1' onPress={onClose}>
@@ -56,23 +38,23 @@ export default function FilterModal({
                         animate={{ translateY: 0, opacity: 1 }}
                         exit={{ translateY: 40, opacity: 0 }}
                         transition={{ type: 'timing', duration: 250 }}
-                        className='bg-zinc-900 border border-zinc-800 rounded-t-3xl px-4 pt-4 pb-6'
+                        className={`${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-white border-gray-200'} border rounded-t-3xl px-4 pt-4 pb-6`}
                     >
                         <View className='items-center mb-3'>
-                            <View className='w-12 h-1.5 rounded-full bg-zinc-700' />
+                            <View className={`w-12 h-1.5 rounded-full ${isDark ? 'bg-zinc-700' : 'bg-gray-300'}`} />
                         </View>
-                        <Text className='text-white text-lg font-semibold mb-3'>Filter</Text>
+                        <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-lg font-semibold mb-3`}>Filter</Text>
 
                         <ScrollView showsVerticalScrollIndicator={false}>
                             {/* Type */}
-                            <Text className='text-zinc-300 mb-2'>Type</Text>
+                            <Text className={`${isDark ? 'text-zinc-300' : 'text-gray-600'} mb-2`}>Type</Text>
                             <View className='flex-row flex-wrap gap-2 mb-4'>
-                                <TouchableOpacity onPress={() => onSelectType(null)} className={`px-3 py-2 rounded-xl border ${selectedType === null ? 'bg-accent-blue-600 border-accent-blue-500' : 'bg-zinc-800 border-zinc-700'}`}>
-                                    <Text className='text-white text-sm'>All</Text>
+                                <TouchableOpacity onPress={() => onSelectType(null)} className={`px-3 py-2 rounded-xl border ${selectedType === null ? 'bg-accent-blue-600 border-accent-blue-500' : (isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-200 border-gray-300')}`}>
+                                    <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-sm`}>All</Text>
                                 </TouchableOpacity>
                                 {types.map(t => (
-                                    <TouchableOpacity key={t} onPress={() => onSelectType(t)} className={`px-3 py-2 rounded-xl border ${selectedType === t ? 'bg-accent-blue-600 border-accent-blue-500' : 'bg-zinc-800 border-zinc-700'}`}>
-                                        <Text className='text-white text-sm capitalize'>{t}</Text>
+                                    <TouchableOpacity key={t} onPress={() => onSelectType(t)} className={`px-3 py-2 rounded-xl border ${selectedType === t ? 'bg-accent-blue-600 border-accent-blue-500' : (isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-200 border-gray-300')}`}>
+                                        <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-sm capitalize`}>{t}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>

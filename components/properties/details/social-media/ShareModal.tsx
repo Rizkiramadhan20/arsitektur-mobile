@@ -2,23 +2,12 @@ import React from 'react'
 import { View, Text, TouchableOpacity, Share } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import Toast from 'react-native-toast-message'
-
-interface PropertyDetail {
-    title?: string
-    city?: string
-    province?: string
-    type?: string
-    content?: string
-    images?: string[]
-}
-
-interface ShareModalProps {
-    visible: boolean
-    onClose: () => void
-    data: PropertyDetail | null
-}
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function ShareModal({ visible, onClose, data }: ShareModalProps) {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
+
     if (!visible) return null
 
     const createShareMessage = () => {
@@ -72,9 +61,9 @@ ${downloadLink}`
                 onPress={onClose}
             />
             <View className='absolute left-0 right-0 bottom-0 px-4 pb-12 pt-2'>
-                <View className='bg-zinc-800 border border-zinc-700 rounded-2xl overflow-hidden'>
-                    <View className='px-4 py-3 border-b border-zinc-700'>
-                        <Text className='text-white font-semibold text-center'>Share Property</Text>
+                <View className={`${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'} border rounded-2xl overflow-hidden`}>
+                    <View className={`px-4 py-3 border-b ${isDark ? 'border-zinc-700' : 'border-gray-200'}`}>
+                        <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-center`}>Share Property</Text>
                     </View>
 
                     {/* Instagram */}
@@ -83,58 +72,58 @@ ${downloadLink}`
                             <Ionicons name='logo-instagram' size={20} color={'#ffffff'} />
                         </View>
                         <View className='flex-1'>
-                            <Text className='text-white font-semibold'>Instagram</Text>
-                            <Text className='text-zinc-400 text-xs'>Share via Instagram</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`}>Instagram</Text>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`}>Share via Instagram</Text>
                         </View>
                     </TouchableOpacity>
 
                     {/* WhatsApp */}
-                    <TouchableOpacity onPress={handleShare} activeOpacity={0.9} className='px-4 py-4 flex-row items-center gap-3 border-t border-zinc-700'>
+                    <TouchableOpacity onPress={handleShare} activeOpacity={0.9} className={`px-4 py-4 flex-row items-center gap-3 border-t ${isDark ? 'border-zinc-700' : 'border-gray-200'}`}>
                         <View className='w-10 h-10 rounded-full bg-green-600 items-center justify-center'>
                             <Ionicons name='logo-whatsapp' size={20} color={'#ffffff'} />
                         </View>
                         <View className='flex-1'>
-                            <Text className='text-white font-semibold'>WhatsApp</Text>
-                            <Text className='text-zinc-400 text-xs'>Share via WhatsApp</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`}>WhatsApp</Text>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`}>Share via WhatsApp</Text>
                         </View>
                     </TouchableOpacity>
 
                     {/* Telegram */}
-                    <TouchableOpacity onPress={handleShare} activeOpacity={0.9} className='px-4 py-4 flex-row items-center gap-3 border-t border-zinc-700'>
+                    <TouchableOpacity onPress={handleShare} activeOpacity={0.9} className={`px-4 py-4 flex-row items-center gap-3 border-t ${isDark ? 'border-zinc-700' : 'border-gray-200'}`}>
                         <View className='w-10 h-10 rounded-full bg-blue-500 items-center justify-center'>
                             <Ionicons name='paper-plane-outline' size={20} color={'#ffffff'} />
                         </View>
                         <View className='flex-1'>
-                            <Text className='text-white font-semibold'>Telegram</Text>
-                            <Text className='text-zinc-400 text-xs'>Share via Telegram</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`}>Telegram</Text>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`}>Share via Telegram</Text>
                         </View>
                     </TouchableOpacity>
 
                     {/* X (Twitter) */}
-                    <TouchableOpacity onPress={handleShare} activeOpacity={0.9} className='px-4 py-4 flex-row items-center gap-3 border-t border-zinc-700'>
+                    <TouchableOpacity onPress={handleShare} activeOpacity={0.9} className={`px-4 py-4 flex-row items-center gap-3 border-t ${isDark ? 'border-zinc-700' : 'border-gray-200'}`}>
                         <View className='w-10 h-10 rounded-full bg-black items-center justify-center'>
                             <Ionicons name='logo-twitter' size={20} color={'#ffffff'} />
                         </View>
                         <View className='flex-1'>
-                            <Text className='text-white font-semibold'>X (Twitter)</Text>
-                            <Text className='text-zinc-400 text-xs'>Share via X</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`}>X (Twitter)</Text>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`}>Share via X</Text>
                         </View>
                     </TouchableOpacity>
 
                     {/* Copy Link */}
-                    <TouchableOpacity onPress={handleCopyToClipboard} activeOpacity={0.9} className='px-4 py-4 flex-row items-center gap-3 border-t border-zinc-700'>
-                        <View className='w-10 h-10 rounded-full bg-zinc-600 items-center justify-center'>
+                    <TouchableOpacity onPress={handleCopyToClipboard} activeOpacity={0.9} className={`px-4 py-4 flex-row items-center gap-3 border-t ${isDark ? 'border-zinc-700' : 'border-gray-200'}`}>
+                        <View className={`w-10 h-10 rounded-full ${isDark ? 'bg-zinc-600' : 'bg-gray-400'} items-center justify-center`}>
                             <Ionicons name='copy-outline' size={20} color={'#ffffff'} />
                         </View>
                         <View className='flex-1'>
-                            <Text className='text-white font-semibold'>Copy Details</Text>
-                            <Text className='text-zinc-400 text-xs'>Copy property information</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`}>Copy Details</Text>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`}>Copy property information</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={onClose} activeOpacity={0.9} className='mt-2 bg-zinc-800 border border-zinc-700 rounded-2xl px-4 py-4 items-center'>
-                    <Text className='text-zinc-200 font-semibold'>Cancel</Text>
+                <TouchableOpacity onPress={onClose} activeOpacity={0.9} className={`mt-2 ${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-200 border-gray-300'} border rounded-2xl px-4 py-4 items-center`}>
+                    <Text className={`${isDark ? 'text-zinc-200' : 'text-gray-700'} font-semibold`}>Cancel</Text>
                 </TouchableOpacity>
             </View>
         </View>

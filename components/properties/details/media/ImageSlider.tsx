@@ -1,19 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-
 import { Image, View, useWindowDimensions, PanResponder, Pressable } from 'react-native'
-
 import { MotiView } from 'moti'
-
-type ImageSliderProps = {
-    images: string[]
-    height?: number
-    onBack?: () => void
-    autoplay?: boolean
-    interval?: number
-    onImagePress?: (index: number) => void
-}
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function ImageSlider({ images, height = 288, onBack, autoplay = true, interval = 3000, onImagePress }: ImageSliderProps) {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
     const data = useMemo(() => images, [images])
     const [activeIndex, setActiveIndex] = useState(0)
     const { width: screenWidth } = useWindowDimensions()
@@ -46,7 +38,7 @@ export default function ImageSlider({ images, height = 288, onBack, autoplay = t
     }, [autoplay, interval, data.length])
 
     return (
-        <View style={{ height }} className='w-full relative bg-zinc-900' {...panResponder.panHandlers}>
+        <View style={{ height }} className={`w-full relative ${isDark ? 'bg-zinc-900' : 'bg-gray-100'}`} {...panResponder.panHandlers}>
             <View className='h-full' style={{ width: screenWidth }}>
                 {data.map((uri, idx) => (
                     <MotiView

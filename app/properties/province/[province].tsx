@@ -4,10 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { fetchProperties } from '@/config/lib/FetchProperties'
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function ProvincePage() {
     const { province } = useLocalSearchParams<{ province: string }>()
     const router = useRouter()
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
     const [properties, setProperties] = useState<Property[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -91,16 +94,16 @@ export default function ProvincePage() {
 
     if (loading) {
         return (
-            <SafeAreaView className='flex-1 bg-background items-center justify-center'>
+            <SafeAreaView className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'} items-center justify-center`}>
                 <ActivityIndicator size="large" color="#3b82f6" />
-                <Text className='text-white mt-4'>Loading properties...</Text>
+                <Text className={`${isDark ? 'text-white' : 'text-gray-900'} mt-4`}>Loading properties...</Text>
             </SafeAreaView>
         )
     }
 
     if (error) {
         return (
-            <SafeAreaView className='flex-1 bg-background items-center justify-center px-4'>
+            <SafeAreaView className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'} items-center justify-center px-4`}>
                 <Text className='text-status-error text-center mb-4'>Error: {error}</Text>
                 <TouchableOpacity
                     className='px-6 py-3 rounded-xl bg-accent-blue-600'
@@ -113,7 +116,7 @@ export default function ProvincePage() {
     }
 
     return (
-        <SafeAreaView className='flex-1 bg-background'>
+        <SafeAreaView className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`}>
             <ScrollView
                 className='flex-1'
                 showsVerticalScrollIndicator={false}
@@ -130,15 +133,15 @@ export default function ProvincePage() {
                     <View className='flex-row items-center justify-between mb-6'>
                         <TouchableOpacity
                             onPress={() => router.back()}
-                            className='w-10 h-10 rounded-full bg-zinc-800 items-center justify-center'
+                            className={`w-10 h-10 rounded-full ${isDark ? 'bg-zinc-800' : 'bg-gray-200'} items-center justify-center`}
                         >
-                            <Text className='text-white text-lg'>←</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-lg`}>←</Text>
                         </TouchableOpacity>
                         <View className='flex-1 items-center'>
-                            <Text className='text-white text-lg font-semibold'>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-lg font-semibold`}>
                                 {getProvinceDisplayName(province || '')}
                             </Text>
-                            <Text className='text-zinc-400 text-sm'>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-sm`}>
                                 {properties.length} properti tersedia
                             </Text>
                         </View>
@@ -169,7 +172,7 @@ export default function ProvincePage() {
                                     />
 
                                     <LinearGradient
-                                        colors={['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.8)']}
+                                        colors={isDark ? ['transparent', 'rgba(0,0,0,0.3)', 'rgba(0,0,0,0.8)'] : ['transparent', 'rgba(0,0,0,0.2)', 'rgba(0,0,0,0.6)']}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 0, y: 1 }}
                                         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}

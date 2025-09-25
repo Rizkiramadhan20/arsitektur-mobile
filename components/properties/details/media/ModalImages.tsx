@@ -8,15 +8,11 @@ import { MotiView } from 'moti'
 
 import ImageViewer from 'react-native-image-zoom-viewer'
 
-interface ModalImagesProps {
-    visible: boolean
-    images: string[]
-    currentIndex: number
-    onClose: () => void
-    onImageChange: (index: number) => void
-}
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function ModalImages({ visible, images, currentIndex, onClose, onImageChange }: ModalImagesProps) {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
     const [currentImageIndex, setCurrentImageIndex] = useState(currentIndex)
     const { width: screenWidth, height: screenHeight } = Dimensions.get('window')
 
@@ -39,17 +35,17 @@ export default function ModalImages({ visible, images, currentIndex, onClose, on
     const renderHeader = () => (
         <TouchableOpacity
             onPress={onClose}
-            className='absolute top-16 right-4 h-10 w-10 rounded-full items-center justify-center bg-black/45 z-10'
+            className={`absolute top-16 right-4 h-10 w-10 rounded-full items-center justify-center ${isDark ? 'bg-black/45' : 'bg-white/45'} z-10`}
             activeOpacity={0.7}
         >
-            <Ionicons name='close' size={22} color={'#ffffff'} />
+            <Ionicons name='close' size={22} color={isDark ? '#ffffff' : '#000000'} />
         </TouchableOpacity>
     )
 
     if (!visible) return null
 
     return (
-        <View className='absolute inset-0 z-50 bg-black'>
+        <View className={`absolute inset-0 z-50 ${isDark ? 'bg-black' : 'bg-white'}`}>
             <ImageViewer
                 imageUrls={imageUrls}
                 index={currentImageIndex}
@@ -63,7 +59,7 @@ export default function ModalImages({ visible, images, currentIndex, onClose, on
                     cancel: 'Batal'
                 }}
                 renderHeader={renderHeader}
-                backgroundColor="rgba(0,0,0,1)"
+                backgroundColor={isDark ? 'rgba(0,0,0,1)' : 'rgba(255,255,255,1)'}
                 enableImageZoom={true}
                 minScale={0.5}
                 maxScale={3}
@@ -90,13 +86,13 @@ export default function ModalImages({ visible, images, currentIndex, onClose, on
                     alignItems: 'center'
                 }}
             >
-                <View className='flex-row items-center justify-center bg-black/40 px-4 py-2.5 rounded-full backdrop-blur-sm'>
+                <View className={`flex-row items-center justify-center ${isDark ? 'bg-black/40' : 'bg-white/40'} px-4 py-2.5 rounded-full backdrop-blur-sm`}>
                     {images.map((_, i) => (
                         <MotiView
                             key={i}
                             animate={{
                                 width: i === currentImageIndex ? 28 : 8,
-                                backgroundColor: i === currentImageIndex ? '#ffffff' : 'rgba(255,255,255,0.4)',
+                                backgroundColor: i === currentImageIndex ? (isDark ? '#ffffff' : '#000000') : (isDark ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)'),
                                 scale: i === currentImageIndex ? 1.1 : 1
                             }}
                             transition={{

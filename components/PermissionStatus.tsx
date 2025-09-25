@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { usePermissions } from '@/context/PermissionContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/context/ThemeProvider';
 
 const PermissionStatus = () => {
     const {
@@ -16,6 +17,8 @@ const PermissionStatus = () => {
         locationPermission,
         requestPermissions
     } = usePermissions();
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     const openAppSettings = () => {
         Linking.openSettings();
@@ -45,9 +48,9 @@ const PermissionStatus = () => {
     const allGranted = cameraPermission && locationPermission;
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: isDark ? '#18181b' : '#ffffff' }]}>
             <View style={styles.header}>
-                <Text style={styles.title}>Status Izin</Text>
+                <Text style={[styles.title, { color: isDark ? '#ffffff' : '#1F2937' }]}>Status Izin</Text>
                 {!allGranted && (
                     <TouchableOpacity onPress={handleRequestPermissions} style={styles.requestButton}>
                         <Text style={styles.requestButtonText}>Minta Izin</Text>
@@ -59,7 +62,7 @@ const PermissionStatus = () => {
                 <View style={styles.permissionItem}>
                     <View style={styles.permissionInfo}>
                         <Ionicons name="camera" size={20} color="#3B82F6" />
-                        <Text style={styles.permissionName}>Kamera</Text>
+                        <Text style={[styles.permissionName, { color: isDark ? '#E5E7EB' : '#374151' }]}>Kamera</Text>
                     </View>
                     <View style={styles.statusContainer}>
                         <Ionicons
@@ -77,7 +80,7 @@ const PermissionStatus = () => {
                 <View style={styles.permissionItem}>
                     <View style={styles.permissionInfo}>
                         <Ionicons name="location" size={20} color="#10B981" />
-                        <Text style={styles.permissionName}>Lokasi</Text>
+                        <Text style={[styles.permissionName, { color: isDark ? '#E5E7EB' : '#374151' }]}>Lokasi</Text>
                     </View>
                     <View style={styles.statusContainer}>
                         <Ionicons
@@ -95,9 +98,9 @@ const PermissionStatus = () => {
             </View>
 
             {!allGranted && (
-                <View style={styles.warningContainer}>
+                <View style={[styles.warningContainer, { backgroundColor: isDark ? '#374151' : '#FEF3C7' }]}>
                     <Ionicons name="warning" size={16} color="#F59E0B" />
-                    <Text style={styles.warningText}>
+                    <Text style={[styles.warningText, { color: isDark ? '#F3F4F6' : '#92400E' }]}>
                         Beberapa fitur mungkin tidak berfungsi optimal tanpa izin yang diperlukan
                     </Text>
                 </View>

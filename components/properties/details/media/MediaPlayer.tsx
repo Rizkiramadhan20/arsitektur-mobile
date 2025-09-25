@@ -1,16 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
-
 import { Image, Text, TouchableOpacity, View, ActivityIndicator, Animated, StyleSheet } from 'react-native'
-
 import { WebView } from 'react-native-webview'
-
 import { Ionicons } from '@expo/vector-icons'
-
-type MediaPlayetProps = {
-    html: string
-}
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function MediaPlayet({ html }: MediaPlayetProps) {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
     const blocks = useMemo(() => parseSimpleHtml(html), [html])
 
     return (
@@ -18,7 +14,7 @@ export default function MediaPlayet({ html }: MediaPlayetProps) {
             {blocks.map((block, index) => {
                 if (block.type === 'paragraph') {
                     return (
-                        <Text key={index} className='text-zinc-300 leading-6 mb-4 mt-2'>
+                        <Text key={index} className={`${isDark ? 'text-zinc-300' : 'text-gray-600'} leading-6 mb-4 mt-2`}>
                             {block.text}
                         </Text>
                     )
@@ -34,7 +30,7 @@ export default function MediaPlayet({ html }: MediaPlayetProps) {
                         6: 'text-sm'
                     }
                     return (
-                        <Text key={index} className={`${headingSizes[block.level as keyof typeof headingSizes] || 'text-lg'} font-bold text-white mb-4 mt-6`}>
+                        <Text key={index} className={`${headingSizes[block.level as keyof typeof headingSizes] || 'text-lg'} font-bold ${isDark ? 'text-white' : 'text-gray-900'} mb-4 mt-6`}>
                             {block.text}
                         </Text>
                     )
@@ -45,8 +41,8 @@ export default function MediaPlayet({ html }: MediaPlayetProps) {
                         <View key={index} className='mb-4 mt-2'>
                             {block.items.map((item, itemIndex) => (
                                 <View key={itemIndex} className='flex-row mb-2'>
-                                    <Text className='text-zinc-300 mr-2 min-w-[20px]'>{itemIndex + 1}.</Text>
-                                    <Text className='text-zinc-300 flex-1 leading-6'>{item}</Text>
+                                    <Text className={`${isDark ? 'text-zinc-300' : 'text-gray-600'} mr-2 min-w-[20px]`}>{itemIndex + 1}.</Text>
+                                    <Text className={`${isDark ? 'text-zinc-300' : 'text-gray-600'} flex-1 leading-6`}>{item}</Text>
                                 </View>
                             ))}
                         </View>
@@ -58,8 +54,8 @@ export default function MediaPlayet({ html }: MediaPlayetProps) {
                         <View key={index} className='mb-4 mt-2'>
                             {block.items.map((item, itemIndex) => (
                                 <View key={itemIndex} className='flex-row mb-2'>
-                                    <Text className='text-zinc-300 mr-2'>•</Text>
-                                    <Text className='text-zinc-300 flex-1 leading-6'>{item}</Text>
+                                    <Text className={`${isDark ? 'text-zinc-300' : 'text-gray-600'} mr-2`}>•</Text>
+                                    <Text className={`${isDark ? 'text-zinc-300' : 'text-gray-600'} flex-1 leading-6`}>{item}</Text>
                                 </View>
                             ))}
                         </View>

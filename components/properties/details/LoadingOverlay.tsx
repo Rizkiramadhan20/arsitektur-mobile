@@ -1,23 +1,19 @@
 import { View, Text } from 'react-native'
-
 import React from 'react'
-
 import { MotiView } from 'moti'
-
 import { Easing } from 'react-native-reanimated'
-
 import loading from '@/assets/Properties/loading.json'
 import LottieView from 'lottie-react-native'
-
-type LoadingOverlayProps = {
-    title?: string
-}
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function LoadingOverlay({ title }: LoadingOverlayProps) {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
+
     return (
-        <View className='flex-1 items-center justify-center bg-background'>
+        <View className={`flex-1 items-center justify-center ${isDark ? 'bg-background' : 'bg-gray-50'}`}>
             {/* Top loader bar */}
-            <View className='absolute top-0 left-0 right-0 h-2 bg-white/8 overflow-hidden'>
+            <View className={`absolute top-0 left-0 right-0 h-2 ${isDark ? 'bg-white/8' : 'bg-gray-200'} overflow-hidden`}>
                 <MotiView
                     from={{ translateX: -100 }}
                     animate={{ translateX: 360 }}
@@ -38,7 +34,7 @@ export default function LoadingOverlay({ title }: LoadingOverlayProps) {
                     transition={{ type: 'timing', duration: 450 }}
                     className='max-w-sm'
                 >
-                    <Text className='text-white text-lg font-semibold mt-4 text-center'>
+                    <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-lg font-semibold mt-4 text-center`}>
                         {title ? `Memuat ${title}...` : 'Loading Property...'}
                     </Text>
                 </MotiView>
@@ -50,7 +46,7 @@ export default function LoadingOverlay({ title }: LoadingOverlayProps) {
                     transition={{ type: 'timing', duration: 600, delay: 150 }}
                     className='max-w-sm'
                 >
-                    <Text className='text-zinc-400 text-sm mt-2 text-center px-8'>
+                    <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-sm mt-2 text-center px-8`}>
                         {title ? 'Mohon tunggu, kami mengambil detail properti...' : 'Please wait while we fetch the property details...'}
                     </Text>
                 </MotiView>

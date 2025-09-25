@@ -2,14 +2,12 @@ import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { MotiView } from 'moti'
-
-interface AllPropertiesCardProps {
-    item: Property
-    index?: number
-}
+import { useTheme } from '@/context/ThemeProvider'
 
 export default function AllPropertiesCard({ item, index = 0 }: AllPropertiesCardProps) {
     const router = useRouter()
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
 
     const handlePropertyClick = (property: Property) => {
         const query = new URLSearchParams({
@@ -28,7 +26,7 @@ export default function AllPropertiesCard({ item, index = 0 }: AllPropertiesCard
         >
             <TouchableOpacity
                 activeOpacity={0.9}
-                className='bg-zinc-800 rounded-2xl overflow-hidden border border-zinc-700'
+                className={`${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'} rounded-2xl overflow-hidden border`}
                 onPress={() => handlePropertyClick(item)}
             >
                 <View className='h-44 w-full relative'>
@@ -48,8 +46,8 @@ export default function AllPropertiesCard({ item, index = 0 }: AllPropertiesCard
                     </View>
                 </View>
                 <View className='p-3'>
-                    <Text className='text-white font-semibold' numberOfLines={1}>{item.title}</Text>
-                    <Text className='text-zinc-400 text-xs mt-1' numberOfLines={1}>📍 {item.city}, {item.province}</Text>
+                    <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`} numberOfLines={1}>{item.title}</Text>
+                    <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs mt-1`} numberOfLines={1}>📍 {item.city}, {item.province}</Text>
                 </View>
             </TouchableOpacity>
         </MotiView>

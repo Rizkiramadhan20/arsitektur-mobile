@@ -1,22 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react'
-
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
-
 import PropertiesNotfound from "@/components/properties/properties/PropertiesNotfound"
-
 import { LinearGradient } from 'expo-linear-gradient';
-
 import { fetchProperties } from '@/config/lib/FetchProperties'
-
 import { useRouter, useFocusEffect } from 'expo-router';
-
 import { useUserLocation } from '@/hooks/useUserLocation';
-
 import { MotiView } from 'moti'
-
 import ProperstiesSkelaton from "@/components/properties/properties/ProperstiesSkelaton"
-
 import Toast from 'react-native-toast-message';
+import { useTheme } from '@/context/ThemeProvider';
 
 export default function Index() {
     const [properties, setProperties] = useState<Property[]>([])
@@ -28,6 +20,8 @@ export default function Index() {
 
     const router = useRouter();
     const { userLocation, provinceSlug, hasLocationPermission } = useUserLocation();
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
 
     const handleViewAllNearYou = () => {
 
@@ -123,7 +117,7 @@ export default function Index() {
     })
 
     return (
-        <ScrollView className='flex-1 bg-background' showsVerticalScrollIndicator={true}>
+        <ScrollView className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`} showsVerticalScrollIndicator={true}>
             <View className='pt-2 pb-6'>
                 {/* Header */}
                 <MotiView
@@ -134,10 +128,10 @@ export default function Index() {
                 >
                     <View className='flex-row items-center justify-between mt-2'>
                         <View>
-                            <Text className='text-zinc-400'>Let&apos;s Find your</Text>
-                            <Text className='text-white text-2xl font-semibold'>Favorite Home</Text>
+                            <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'}`}>Let&apos;s Find your</Text>
+                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-2xl font-semibold`}>Favorite Home</Text>
                         </View>
-                        <TouchableOpacity className='h-10 w-10 rounded-full overflow-hidden border border-zinc-700'>
+                        <TouchableOpacity className={`h-10 w-10 rounded-full overflow-hidden border ${isDark ? 'border-zinc-700' : 'border-gray-300'}`}>
                             <Image source={require('../../../assets/images/react-logo.png')} className='h-full w-full' resizeMode='cover' />
                         </TouchableOpacity>
                     </View>
@@ -150,15 +144,15 @@ export default function Index() {
                     transition={{ type: 'timing', duration: 600, delay: 500 }}
                     className='px-2 '
                 >
-                    <View className='mt-4 bg-background rounded-2xl px-4 py-3 border border-zinc-800'>
+                    <View className={`mt-4 ${isDark ? 'bg-background border-zinc-800' : 'bg-white border-gray-200'} rounded-2xl px-4 py-3 border`}>
                         <View className='flex-row items-center'>
-                            <View className='h-9 w-9 rounded-xl bg-zinc-800 items-center justify-center mr-3'>
-                                <Text className='text-zinc-400'>🔍</Text>
+                            <View className={`h-9 w-9 rounded-xl ${isDark ? 'bg-zinc-800' : 'bg-gray-100'} items-center justify-center mr-3`}>
+                                <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'}`}>🔍</Text>
                             </View>
                             <TextInput
                                 placeholder='Search by Address, City, or ZIP'
-                                placeholderTextColor="#6b7280"
-                                className='flex-1 text-white'
+                                placeholderTextColor={isDark ? "#6b7280" : "#9ca3af"}
+                                className={`flex-1 ${isDark ? 'text-white' : 'text-gray-900'}`}
                                 value={searchQuery}
                                 onChangeText={handleSearchChange}
                                 onSubmitEditing={() => {
@@ -184,7 +178,7 @@ export default function Index() {
                 >
                     <View className='rounded-2xl p-6 relative overflow-hidden' style={{ backgroundColor: '#2563eb' }}>
                         <LinearGradient
-                            colors={['#2563eb', '#3b82f6']}
+                            colors={isDark ? ['#2563eb', '#3b82f6'] : ['#1d4ed8', '#2563eb']}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 16 }}
@@ -236,16 +230,16 @@ export default function Index() {
                                 <MotiView
                                     animate={{
                                         scale: activeChip === label ? 1.05 : 1,
-                                        backgroundColor: activeChip === label ? '#3b82f6' : '#1f2937'
+                                        backgroundColor: activeChip === label ? '#3b82f6' : (isDark ? '#1f2937' : '#f3f4f6')
                                     }}
                                     transition={{ type: 'timing', duration: 200 }}
-                                    className='border border-zinc-800 rounded-xl overflow-hidden'
+                                    className={`border ${isDark ? 'border-zinc-800' : 'border-gray-200'} rounded-xl overflow-hidden`}
                                 >
                                     <TouchableOpacity
-                                        className={`px-4 py-2 rounded-xl ${activeChip === label ? 'bg-chip-active' : 'bg-chip-inactive'}`}
+                                        className={`px-4 py-2 rounded-xl ${activeChip === label ? 'bg-chip-active' : (isDark ? 'bg-chip-inactive' : 'bg-gray-100')}`}
                                         onPress={() => handleChipPress(label)}
                                     >
-                                        <Text className={activeChip === label ? 'text-white' : 'text-zinc-300'}>{label}</Text>
+                                        <Text className={activeChip === label ? 'text-white' : (isDark ? 'text-zinc-300' : 'text-gray-700')}>{label}</Text>
                                     </TouchableOpacity>
                                 </MotiView>
                             </MotiView>
@@ -360,7 +354,7 @@ export default function Index() {
                                 <View className='flex-row items-center flex-1'>
                                     {/* Modern Accent Line with Gradient */}
                                     <LinearGradient
-                                        colors={['#3b82f6', '#1d4ed8']}
+                                        colors={isDark ? ['#3b82f6', '#1d4ed8'] : ['#2563eb', '#1e40af']}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 0, y: 1 }}
                                         className='w-1 h-8 rounded-full mr-4'
@@ -369,10 +363,10 @@ export default function Index() {
                                     {/* Header Content */}
                                     <View className='flex-1'>
                                         <View className='flex-row items-center mb-1'>
-                                            <Text className='text-white text-2xl font-bold tracking-tight'>Dekat Anda</Text>
+                                            <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-2xl font-bold tracking-tight`}>Dekat Anda</Text>
                                         </View>
 
-                                        <Text className='text-zinc-400 text-base leading-relaxed'>
+                                        <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-base leading-relaxed`}>
                                             {userLocation ? `Properti terpilih di ${userLocation.province}` : 'Aktifkan lokasi untuk melihat properti di sekitar Anda'}
                                         </Text>
                                     </View>
@@ -387,7 +381,7 @@ export default function Index() {
                                 >
                                     <TouchableOpacity
                                         onPress={handleViewAllNearYou}
-                                        className='flex-row items-center bg-gradient-to-r from-blue-600 to-blue-700 px-5 py-3 rounded-2xl border border-blue-500/30 shadow-lg active:scale-95'
+                                        className={`flex-row items-center ${isDark ? 'bg-gradient-to-r from-blue-600 to-blue-700 border-blue-500/30' : 'bg-gradient-to-r from-blue-700 to-blue-800 border-blue-600/30'} px-5 py-3 rounded-2xl border shadow-lg active:scale-95`}
                                         style={{
                                             shadowColor: '#3b82f6',
                                             shadowOffset: { width: 0, height: 4 },
@@ -429,7 +423,7 @@ export default function Index() {
                                     transition={{ type: 'timing', duration: 500, delay: 1000 + (index * 75) }}
                                 >
                                     <TouchableOpacity
-                                        className='bg-zinc-800 rounded-2xl overflow-hidden border border-zinc-700 active:bg-zinc-700'
+                                        className={`${isDark ? 'bg-zinc-800 border-zinc-700 active:bg-zinc-700' : 'bg-white border-gray-200 active:bg-gray-50'} rounded-2xl overflow-hidden border`}
                                         style={{
                                             shadowColor: '#000',
                                             shadowOffset: { width: 0, height: 2 },
@@ -459,14 +453,14 @@ export default function Index() {
                                             {/* Text Details Section - Right */}
                                             <View className='flex-1 p-4 justify-between'>
                                                 {/* Property Title */}
-                                                <Text className='text-white text-lg font-bold mb-2' numberOfLines={1}>
+                                                <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-lg font-bold mb-2`} numberOfLines={1}>
                                                     {property.title}
                                                 </Text>
 
                                                 {/* Address */}
                                                 <View className='flex-row items-center mb-3'>
-                                                    <Text className='text-white text-xs mr-1'>📍</Text>
-                                                    <Text className='text-zinc-400 text-xs' numberOfLines={1}>
+                                                    <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-xs mr-1`}>📍</Text>
+                                                    <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`} numberOfLines={1}>
                                                         {property.city}, {property.province}
                                                     </Text>
                                                 </View>
@@ -475,22 +469,22 @@ export default function Index() {
                                                 {property.facilities && property.facilities.length > 0 && (
                                                     <View className='flex-row flex-wrap gap-2'>
                                                         {property.facilities.slice(0, 2).map((facility: PropertyFacility, idx: number) => (
-                                                            <View key={idx} className='flex-row items-center bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30'>
+                                                            <View key={idx} className={`flex-row items-center ${isDark ? 'bg-white/20 border-white/30' : 'bg-gray-100 border-gray-300'} backdrop-blur-sm px-2 py-1 rounded-lg border`}>
                                                                 {facility.imageUrl ? (
                                                                     <Image
                                                                         source={{ uri: facility.imageUrl }}
-                                                                        className='w-6 h-6 rounded-full mr-1 object-cover bg-white/30 border border-white/30 p-1 mix-blend-screen'
+                                                                        className={`w-6 h-6 rounded-full mr-1 object-cover ${isDark ? 'bg-white/30 border-white/30' : 'bg-gray-200 border-gray-400'} border p-1 mix-blend-screen`}
                                                                         resizeMode='cover'
                                                                     />
                                                                 ) : (
-                                                                    <View className='w-3 h-3 rounded-full bg-white/30 mr-1' />
+                                                                    <View className={`w-3 h-3 rounded-full ${isDark ? 'bg-white/30' : 'bg-gray-300'} mr-1`} />
                                                                 )}
-                                                                <Text className='text-white text-xs font-medium'>{facility.title}</Text>
+                                                                <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-xs font-medium`}>{facility.title}</Text>
                                                             </View>
                                                         ))}
                                                         {property.facilities.length > 2 && (
-                                                            <View className='bg-white/20 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/30 flex items-center justify-center'>
-                                                                <Text className='text-white text-xs font-medium'>
+                                                            <View className={`${isDark ? 'bg-white/20 border-white/30' : 'bg-gray-100 border-gray-300'} backdrop-blur-sm px-2 py-1 rounded-lg border flex items-center justify-center`}>
+                                                                <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-xs font-medium`}>
                                                                     +{property.facilities.length - 2} more
                                                                 </Text>
                                                             </View>
@@ -508,13 +502,13 @@ export default function Index() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ type: 'timing', duration: 600, delay: 1200 }}
                             >
-                                <View className='bg-zinc-900/80 rounded-3xl p-8 border border-zinc-800/50 items-center justify-center'>
+                                <View className={`${isDark ? 'bg-zinc-900/80 border-zinc-800/50' : 'bg-white/80 border-gray-200/50'} rounded-3xl p-8 border items-center justify-center`}>
                                     <MotiView
                                         from={{ opacity: 0, scale: 0.8 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ type: 'timing', duration: 500, delay: 1400 }}
                                     >
-                                        <View className='w-16 h-16 bg-zinc-800 rounded-full items-center justify-center mb-4'>
+                                        <View className={`w-16 h-16 ${isDark ? 'bg-zinc-800' : 'bg-gray-200'} rounded-full items-center justify-center mb-4`}>
                                             <Text className='text-2xl'>📍</Text>
                                         </View>
                                     </MotiView>
@@ -523,14 +517,14 @@ export default function Index() {
                                         animate={{ opacity: 1, translateY: 0 }}
                                         transition={{ type: 'timing', duration: 500, delay: 1500 }}
                                     >
-                                        <Text className='text-white text-lg font-semibold mb-2'>Aktifkan Lokasi</Text>
+                                        <Text className={`${isDark ? 'text-white' : 'text-gray-900'} text-lg font-semibold mb-2`}>Aktifkan Lokasi</Text>
                                     </MotiView>
                                     <MotiView
                                         from={{ opacity: 0, translateY: 20 }}
                                         animate={{ opacity: 1, translateY: 0 }}
                                         transition={{ type: 'timing', duration: 500, delay: 1600 }}
                                     >
-                                        <Text className='text-zinc-400 text-center mb-4'>
+                                        <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-center mb-4`}>
                                             Aktifkan akses lokasi untuk melihat properti di sekitar Anda
                                         </Text>
                                     </MotiView>

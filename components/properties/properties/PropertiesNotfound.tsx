@@ -1,15 +1,25 @@
 import { View, Text, TouchableOpacity } from 'react-native'
+
 import React from 'react'
+
 import { LinearGradient } from 'expo-linear-gradient'
+
 import { MotiView } from 'moti'
+
 import LottieView from "lottie-react-native"
+
 import { Ionicons } from '@expo/vector-icons'
+
+import { useTheme } from '@/context/ThemeProvider'
 
 import blobs from "@/assets/Properties/window.json"
 
 export default function PropertiesNotfound() {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
+
     return (
-        <View className="flex-1 bg-background">
+        <View className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`}>
             {/* Background Gradient */}
             <LinearGradient
                 colors={['#000000', '#18181b', '#000000']}
@@ -32,7 +42,7 @@ export default function PropertiesNotfound() {
                 >
                     <LinearGradient
                         colors={['#18181b', '#27272a', '#18181b']}
-                        className="rounded-3xl p-8 border border-zinc-800 shadow-2xl"
+                        className="rounded-3xl p-8 border border-card-border shadow-2xl"
                     >
                         {/* Illustration Container */}
                         <MotiView
@@ -59,7 +69,7 @@ export default function PropertiesNotfound() {
                             className="items-center"
                         >
                             {/* Icon */}
-                            <View className="w-16 h-16 bg-blue-500/10 rounded-full items-center justify-center mb-6">
+                            <View className="w-16 h-16 bg-accent-blue-600/10 rounded-full items-center justify-center mb-6">
                                 <Ionicons name="construct-outline" size={32} color="#3b82f6" />
                             </View>
 
@@ -74,8 +84,8 @@ export default function PropertiesNotfound() {
                             </Text>
 
                             {/* Status Indicator */}
-                            <View className="flex-row items-center bg-zinc-800/50 rounded-full px-4 py-2 mb-6">
-                                <View className="w-2 h-2 bg-yellow-400 rounded-full mr-3 animate-pulse" />
+                            <View className="flex-row items-center bg-card rounded-full px-4 py-2 mb-6 border border-card-border">
+                                <View className="w-2 h-2 bg-status-warning rounded-full mr-3 animate-pulse" />
                                 <Text className="text-sm text-text-tertiary font-medium">
                                     Perkiraan waktu: 2-4 jam
                                 </Text>
@@ -87,7 +97,7 @@ export default function PropertiesNotfound() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ type: 'timing', duration: 500, delay: 800 }}
                             >
-                                <TouchableOpacity className="bg-blue-600 rounded-2xl px-6 py-3 active:scale-95">
+                                <TouchableOpacity className="bg-accent-blue-600 rounded-2xl px-6 py-3 active:scale-95">
                                     <Text className="text-white font-semibold text-center">
                                         Cek Lagi Nanti
                                     </Text>
