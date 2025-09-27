@@ -1,8 +1,14 @@
 import React from 'react'
+
 import { Image, Text, TouchableOpacity, View } from 'react-native'
+
 import { useRouter } from 'expo-router'
+
 import { MotiView } from 'moti'
+
 import { useTheme } from '@/context/ThemeProvider'
+
+import { Ionicons } from '@expo/vector-icons'
 
 export default function AllPropertiesCard({ item, index = 0 }: AllPropertiesCardProps) {
     const router = useRouter()
@@ -47,7 +53,10 @@ export default function AllPropertiesCard({ item, index = 0 }: AllPropertiesCard
                 </View>
                 <View className='p-3'>
                     <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold`} numberOfLines={1}>{item.title}</Text>
-                    <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs mt-1`} numberOfLines={1}>📍 {item.city}, {item.province}</Text>
+                    <View className="flex-row items-center mt-1">
+                        <Ionicons name="location" size={12} color={isDark ? "#a1a1aa" : "#6b7280"} style={{ marginRight: 4 }} />
+                        <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`} numberOfLines={1}>{item.city}, {item.province}</Text>
+                    </View>
                 </View>
             </TouchableOpacity>
         </MotiView>

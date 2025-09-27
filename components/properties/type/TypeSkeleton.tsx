@@ -1,71 +1,88 @@
 import React from 'react'
 
-import { View } from 'react-native'
-
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { View, ScrollView, DimensionValue } from 'react-native'
 
 import { MotiView } from 'moti'
 
+import { useTheme } from '@/context/ThemeProvider'
+
+const SkeletonBox = ({ width, height, className = '', delay = 0, isDark = true }: { width: DimensionValue, height: DimensionValue, className?: string, delay?: number, isDark?: boolean }) => (
+    <MotiView
+        from={{ opacity: 0.3 }}
+        animate={{ opacity: 0.7 }}
+        transition={{
+            type: 'timing',
+            duration: 1000,
+            delay,
+            loop: true,
+            repeatReverse: true,
+        }}
+        className={`${isDark ? 'bg-zinc-800' : 'bg-gray-200'} rounded-lg ${className}`}
+        style={{ width, height }}
+    />
+)
+
 export default function TypeSkeleton() {
+    const { theme } = useTheme()
+    const isDark = theme === 'dark'
+    const placeholderItems = Array.from({ length: 10 }).map((_, index) => index)
+
     return (
-        <SafeAreaView className='flex-1 bg-background'>
-            {/* Header Skeleton */}
-            <View className='px-2 pt-2 pb-3'>
-                <MotiView
-                    from={{ opacity: 0, translateY: -12 }}
-                    animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ type: 'timing', duration: 450 }}
-                >
-                    <View className='flex-row items-center justify-between mt-2 mb-2'>
-                        <View className='h-10 w-10 rounded-full bg-zinc-800' />
-                        <View className='h-6 w-32 bg-zinc-800 rounded-lg' />
-                        <View className='h-10 w-10' />
-                    </View>
-                </MotiView>
+        <ScrollView className={`flex-1 ${isDark ? 'bg-background' : 'bg-gray-50'}`} showsVerticalScrollIndicator={false}>
+            {/* Header */}
+            <MotiView
+                from={{ opacity: 0, translateY: -12 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                transition={{ type: 'timing', duration: 450 }}
+                className='px-2 pt-2'
+            >
+                <View className='flex-row items-center justify-between mt-2 mb-2'>
+                    <SkeletonBox width={40} height={40} className="rounded-full" isDark={isDark} />
+                    <SkeletonBox width={140} height={20} isDark={isDark} />
+                    <View className='h-10 w-10' />
+                </View>
+            </MotiView>
 
-                <MotiView
-                    from={{ opacity: 0, translateY: 12 }}
-                    animate={{ opacity: 1, translateY: 0 }}
-                    transition={{ type: 'timing', duration: 450, delay: 150 }}
-                >
-                    <View className='mt-2 bg-zinc-900 rounded-2xl px-4 py-3 border border-zinc-800'>
-                        <View className='flex-row items-center'>
-                            <View className='h-9 w-9 rounded-xl bg-zinc-800 mr-3' />
-                            <View className='flex-1 h-6 bg-zinc-800 rounded-lg' />
-                            <View className='h-10 w-10 rounded-xl bg-zinc-800 ml-3' />
-                        </View>
+            {/* Search */}
+            <MotiView
+                from={{ opacity: 0, translateY: 12 }}
+                animate={{ opacity: 1, translateY: 0 }}
+                transition={{ type: 'timing', duration: 450, delay: 150 }}
+                className='px-2'
+            >
+                <View className={`mt-2 ${isDark ? 'bg-background border-zinc-800' : 'bg-white border-gray-200'} rounded-2xl px-4 py-3 border`}>
+                    <View className='flex-row items-center'>
+                        <SkeletonBox width={36} height={36} className="rounded-xl mr-3" isDark={isDark} />
+                        <SkeletonBox width={'70%'} height={20} className='flex-1' isDark={isDark} />
+                        <SkeletonBox width={40} height={40} className='rounded-xl ml-3' isDark={isDark} />
                     </View>
-                </MotiView>
-            </View>
+                </View>
+            </MotiView>
 
-            {/* Grid Skeleton */}
-            <View className='flex-1 px-2'>
-                <View className='flex-row flex-wrap gap-2'>
-                    {Array.from({ length: 6 }).map((_, index) => (
+            {/* Grid (2 columns) */}
+            <View className='px-2 py-3'>
+                <View className='flex-row flex-wrap' style={{ gap: 8 }}>
+                    {placeholderItems.map((index) => (
                         <MotiView
                             key={index}
-                            from={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{
-                                type: 'timing',
-                                duration: 300,
-                                delay: index * 100
-                            }}
-                            className='w-[48%] bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800'
+                            from={{ opacity: 0, translateY: 10 }}
+                            animate={{ opacity: 1, translateY: 0 }}
+                            transition={{ type: 'timing', duration: 350, delay: 80 + index * 40 }}
+                            style={{ width: '48%' }}
                         >
-                            <View className='h-48 bg-zinc-800' />
-                            <View className='p-3'>
-                                <View className='h-4 bg-zinc-800 rounded-lg mb-2' />
-                                <View className='h-3 bg-zinc-800 rounded-lg w-3/4 mb-2' />
-                                <View className='flex-row gap-2'>
-                                    <View className='h-6 bg-zinc-800 rounded-lg w-16' />
-                                    <View className='h-6 bg-zinc-800 rounded-lg w-20' />
+                            <View className={`${isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-gray-200 border-gray-300'} rounded-2xl overflow-hidden border`}>
+                                <View style={{ height: 176 }}>
+                                    <SkeletonBox width={'100%'} height={'100%'} isDark={isDark} />
+                                </View>
+                                <View className='p-3'>
+                                    <SkeletonBox width={'80%'} height={16} className='mb-2' isDark={isDark} />
+                                    <SkeletonBox width={'60%'} height={12} isDark={isDark} />
                                 </View>
                             </View>
                         </MotiView>
                     ))}
                 </View>
             </View>
-        </SafeAreaView>
+        </ScrollView>
     )
 }

@@ -32,7 +32,7 @@ function ListItem({ icon, label, value, onPress, theme }: { icon: React.ReactNod
 
 export default function ProfileScreen() {
     const router = useRouter()
-    const { theme, toggleTheme } = useTheme()
+    const { theme, mode, toggleTheme } = useTheme()
     const isDark = theme === 'dark'
 
     return (
@@ -109,7 +109,7 @@ export default function ProfileScreen() {
                 <ListItem
                     icon={<Ionicons name={isDark ? 'moon' : 'sunny'} size={18} color={isDark ? '#E5E7EB' : '#6B7280'} />}
                     label="Theme"
-                    value={isDark ? 'Dark' : 'Light'}
+                    value={mode === 'system' ? 'System' : isDark ? 'Dark' : 'Light'}
                     onPress={toggleTheme}
                     theme={theme}
                 />

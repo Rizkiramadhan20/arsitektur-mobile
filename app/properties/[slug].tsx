@@ -1,25 +1,38 @@
 import React, { useEffect, useState } from 'react'
-import { Image, ScrollView, Text, TouchableOpacity, View, Platform, Linking } from 'react-native'
+
+import { Image, ScrollView, Text, TouchableOpacity, View, Platform, Linking, useColorScheme } from 'react-native'
+
 import Toast from 'react-native-toast-message'
+
 import { BlurView } from 'expo-blur'
+
 import { Ionicons } from '@expo/vector-icons'
+
 import MediaPlayer from '@/components/properties/details/media/MediaPlayer'
+
 import ImageSlider from '@/components/properties/details/media/ImageSlider'
+
 import ModalImages from '@/components/properties/details/media/ModalImages'
+
 import ShareModal from '@/components/properties/details/social-media/ShareModal'
+
 import { useLocalSearchParams, useRouter } from 'expo-router'
+
 import { fetchPropertiesBySlug } from '@/config/lib/FetchProperties'
+
 import { db } from '@/config/firebase/Firebase'
+
 import { collection, getDocs, limit, query, where } from 'firebase/firestore'
+
 import LoadingOverlay from '@/components/properties/details/LoadingOverlay'
+
 import PropertiesNotfound from "@/components/properties/details/PropertiesNotfound"
-import { useTheme } from '@/context/ThemeProvider'
 
 export default function PropertiesDetails() {
     const router = useRouter()
     const { slug, type, province, title } = useLocalSearchParams<{ slug: string; type: string; province: string; title?: string }>()
-    const { theme } = useTheme()
-    const isDark = theme === 'dark'
+    const colorScheme = useColorScheme()
+    const isDark = colorScheme === 'dark'
 
     const [data, setData] = useState<PropertyDetail | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
@@ -234,7 +247,10 @@ export default function PropertiesDetails() {
                                             <View className='flex-1 p-3 justify-between'>
                                                 <View>
                                                     <Text className={`${isDark ? 'text-white' : 'text-gray-900'} font-semibold text-base mb-1`} numberOfLines={1}>{item.title}</Text>
-                                                    <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs mt-1`} numberOfLines={1}>📍{item.city}, {item.province}</Text>
+                                                    <View className="flex-row items-center mt-1">
+                                                        <Ionicons name="location" size={12} color={isDark ? "#a1a1aa" : "#6b7280"} style={{ marginRight: 4 }} />
+                                                        <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'} text-xs`} numberOfLines={1}>{item.city}, {item.province}</Text>
+                                                    </View>
                                                 </View>
 
                                                 <View className='flex-row flex-wrap gap-2 mt-2'>

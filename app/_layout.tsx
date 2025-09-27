@@ -4,9 +4,8 @@ import { Stack } from 'expo-router';
 
 import { StatusBar } from 'expo-status-bar';
 
-import { useColorScheme } from '@/config/colors/use-color-scheme';
-
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View } from 'react-native';
 
 import "@/global.css";
 
@@ -24,33 +23,42 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function ThemedNavigation() {
   const { theme } = useCustomTheme();
+  const isDark = theme === 'dark';
+  const backgroundColor = isDark ? '#000000' : '#ffffff';
+  return (
+    <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
+      <View className={theme} style={{ flex: 1 }}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+            animationDuration: 300,
+            contentStyle: { backgroundColor },
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="permissions" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="properties" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <Toast />
+        <StatusBar style={isDark ? 'light' : 'dark'} />
+      </View>
+    </ThemeProvider>
+  );
+}
 
+export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <CustomThemeProvider>
           <AuthProvider>
             <PermissionProvider>
-              <ThemeProvider value={(theme ?? colorScheme) === 'dark' ? DarkTheme : DefaultTheme}>
-                <Stack
-                  screenOptions={{
-                    headerShown: false,
-                    animation: 'slide_from_right',
-                    animationDuration: 300
-                  }}
-                >
-                  <Stack.Screen name="index" />
-                  <Stack.Screen name="permissions" />
-                  <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="properties" />
-                  <Stack.Screen name="+not-found" />
-                </Stack>
-                <Toast />
-                <StatusBar style={(theme ?? colorScheme) === 'dark' ? 'light' : 'dark'} />
-              </ThemeProvider>
+              <ThemedNavigation />
             </PermissionProvider>
           </AuthProvider>
         </CustomThemeProvider>

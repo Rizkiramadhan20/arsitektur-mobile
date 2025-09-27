@@ -1,3 +1,79 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.dark {
+  /* Background */
+  --background: #171411;
+  --card: #18181b;
+  --card-border: #27272a;
+
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-muted: #d4d4d8;
+  --text-placeholder: #6b7280;
+  --text-error: #f87171;
+
+  /* Accent */
+  --accent-blue-400: #60a5fa;
+  --accent-blue-500: #3b82f6;
+  --accent-blue-600: #2563eb;
+
+  /* Interactive */
+  --interactive-search: #a1a1aa;
+  --interactive-settings: #ffffff;
+  --interactive-bookmark: #3b82f6;
+
+  /* Status */
+  --status-error: #f87171;
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+
+  /* Border */
+  --border-primary: #27272a;
+  --border-secondary: #3f3f46;
+
+  /* Chip */
+  --chip-active: #2563eb;
+  --chip-inactive: #18181b;
+}
+
+.light {
+  /* Background */
+  --background: #171411;
+  --card: #18181b;
+  --card-border: #27272a;
+
+  /* Text */
+  --text-primary: #111827;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-muted: #d4d4d8;
+  --text-placeholder: #9ca3af;
+  --text-error: #f87171;
+
+  /* Accent */
+  --accent-blue-400: #60a5fa;
+  --accent-blue-500: #3b82f6;
+  --accent-blue-600: #2563eb;
+
+  /* Interactive */
+  --interactive-search: #9ca3af;
+  --interactive-settings: #111827;
+  --interactive-bookmark: #3b82f6;
+
+  /* Status */
+  --status-error: #f87171;
+  --status-success: #4ade80;
+  --status-warning: #fbbf24;
+
+  /* Border */
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+
+  /* Chip */
+  --chip-active: #2563eb;
+  --chip-inactive: #f3f4f6;
+}

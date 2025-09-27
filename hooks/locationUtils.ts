@@ -9,10 +9,8 @@ export interface UserLocation {
     city: string;
 }
 
-// Cache untuk menyimpan koordinat provinsi yang sudah di-fetch dari properties
 let provinceCoordinatesCache: Record<string, { lat: number; lng: number; name: string }> | null = null;
 
-// Fungsi untuk mendapatkan koordinat provinsi dari data properties yang sudah di-fetch
 async function getProvinceCoordinates(): Promise<Record<string, { lat: number; lng: number; name: string }>> {
     if (provinceCoordinatesCache) {
         return provinceCoordinatesCache;
@@ -25,7 +23,7 @@ async function getProvinceCoordinates(): Promise<Record<string, { lat: number; l
         response.data.forEach(property => {
             if (!coordinates[property.province]) {
                 coordinates[property.province] = {
-                    lat: -6.2088, // Default Jakarta, bisa disesuaikan dengan data property
+                    lat: -6.2088,
                     lng: 106.8456,
                     name: property.province
                 };
@@ -35,7 +33,6 @@ async function getProvinceCoordinates(): Promise<Record<string, { lat: number; l
         provinceCoordinatesCache = coordinates;
         return coordinates;
     } catch {
-        // Fallback ke koordinat hardcoded jika API gagal
         const fallbackCoordinates: Record<string, { lat: number; lng: number; name: string }> = {
             'DKI Jakarta': { lat: -6.2088, lng: 106.8456, name: 'DKI Jakarta' },
             'Jawa Barat': { lat: -6.9175, lng: 107.6191, name: 'Jawa Barat' },
@@ -51,7 +48,7 @@ async function getProvinceCoordinates(): Promise<Record<string, { lat: number; l
 }
 
 function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
-    const R = 6371; // Radius bumi dalam km
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLng = (lng2 - lng1) * Math.PI / 180;
     const a =
@@ -62,12 +59,9 @@ function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: numbe
     return R * c;
 }
 
-// Fungsi untuk mendapatkan provinsi berdasarkan koordinat dengan algoritma yang lebih cerdas
 export async function getProvinceFromCoordinates(latitude: number, longitude: number): Promise<string> {
 
-    // Algoritma berbasis batas geografis untuk Jawa Barat
     if (latitude >= -7.5 && latitude <= -5.5 && longitude >= 105.0 && longitude <= 109.0) {
-        // Cek lebih spesifik untuk Jawa Barat
         if (latitude >= -6.0 && latitude <= -6.5 && longitude >= 106.0 && longitude <= 108.0) {
             return 'Jawa Barat';
         }
@@ -77,17 +71,14 @@ export async function getProvinceFromCoordinates(latitude: number, longitude: nu
         return 'Jawa Barat';
     }
 
-    // Algoritma berbasis batas geografis untuk Jakarta
     if (latitude >= -6.4 && latitude <= -6.0 && longitude >= 106.7 && longitude <= 106.9) {
         return 'DKI Jakarta';
     }
 
-    // Algoritma berbasis batas geografis untuk Banten
     if (latitude >= -6.8 && latitude <= -5.5 && longitude >= 105.0 && longitude <= 106.5) {
         return 'Banten';
     }
 
-    // Fallback ke algoritma jarak terdekat menggunakan data yang di-fetch
     let closestProvince = 'DKI Jakarta';
     let minDistance = Infinity;
 
@@ -102,16 +93,13 @@ export async function getProvinceFromCoordinates(latitude: number, longitude: nu
             }
         }
     } catch {
-        // Error getting province coordinates
     }
 
     return closestProvince;
 }
 
-// Fungsi untuk mendapatkan lokasi user dan provinsi
 export async function getUserLocation(): Promise<UserLocation | null> {
     try {
-        // Dapatkan lokasi saat ini dengan accuracy yang lebih tinggi
         const location = await Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.High,
         });
@@ -124,10 +112,9 @@ export async function getUserLocation(): Promise<UserLocation | null> {
             latitude,
             longitude,
             province,
-            city: 'Unknown', // Bisa ditambahkan mapping kota jika diperlukan
+            city: 'Unknown',
         };
     } catch {
-        // Fallback: coba dengan accuracy yang lebih rendah
         try {
             const fallbackLocation = await Location.getCurrentPositionAsync({
                 accuracy: Location.Accuracy.Lowest,
@@ -149,7 +136,6 @@ export async function getUserLocation(): Promise<UserLocation | null> {
     }
 }
 
-// Fungsi untuk mendapatkan slug provinsi (untuk URL)
 export function getProvinceSlug(provinceName: string): string {
     return provinceName
         .toLowerCase()
@@ -157,7 +143,6 @@ export function getProvinceSlug(provinceName: string): string {
         .replace(/[^a-z0-9-]/g, '');
 }
 
-// Fungsi untuk mendapatkan nama provinsi dari slug
 export async function getProvinceNameFromSlug(slug: string): Promise<string> {
     try {
         const provinceCoordinates = await getProvinceCoordinates();

@@ -1,8 +1,13 @@
 import { Tabs } from 'expo-router';
+
 import React from 'react';
+
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+
 import { View, Text } from 'react-native'
+
 import { SafeAreaView } from 'react-native-safe-area-context'
+
 import { useTheme } from '@/context/ThemeProvider'
 
 export default function TabLayout() {
@@ -41,13 +46,13 @@ export default function TabLayout() {
                     }}
                 />
                 <Tabs.Screen
-                    name="blog"
+                    name="heart"
                     options={{
-                        title: 'blog',
+                        title: 'Heart',
                         tabBarIcon: ({ focused }: { focused: boolean }) => (
                             <View className={`relative flex-row items-center gap-2 rounded-full px-3 h-[36px] w-[92px] justify-center ${focused ? 'bg-[#3b82f6]' : ''}`}>
                                 <Ionicons size={20} name="heart" color={focused ? '#ffffff' : (isDark ? '#a1a1aa' : '#6b7280')} />
-                                <Text className={`text-xs font-medium ${focused ? 'text-white' : 'opacity-0 absolute'}`}>Saved</Text>
+                                <Text className={`text-xs font-medium ${focused ? 'text-white' : 'opacity-0 absolute'}`}>Heart</Text>
                             </View>
                         ),
                     }}

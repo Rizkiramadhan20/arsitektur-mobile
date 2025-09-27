@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 
 import React from 'react';
 
-export default function BlogLayout() {
+export default function HeartLayout() {
     return (
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />

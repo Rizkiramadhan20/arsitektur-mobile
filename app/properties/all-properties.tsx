@@ -4,13 +4,13 @@ import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 import { useRouter } from 'expo-router'
 
+import { Ionicons } from '@expo/vector-icons'
+
 import AllPropertiesNotfound from '@/components/properties/all-properties/AllPropertiesNotfound'
 
 import AllProperstiesSkelaton from '@/components/properties/all-properties/AllProperstiesSkelaton'
 
 import AllPropertiesFilter from "@/components/properties/all-properties/AllPropertiesFilter"
-
-import { Ionicons } from '@expo/vector-icons'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -102,7 +102,7 @@ export default function AllProperties() {
                     <View className={`mt-2 ${isDark ? 'bg-background border-zinc-800' : 'bg-white border-gray-200'} rounded-2xl px-4 py-3 border`}>
                         <View className='flex-row items-center'>
                             <View className={`h-9 w-9 rounded-xl ${isDark ? 'bg-zinc-800' : 'bg-gray-100'} items-center justify-center mr-3`}>
-                                <Text className={`${isDark ? 'text-zinc-400' : 'text-gray-500'}`}>🔍</Text>
+                                <Ionicons name="search" size={20} color={isDark ? "#a1a1aa" : "#6b7280"} />
                             </View>
                             <TextInput
                                 placeholder='Search by Address, City, or ZIP'

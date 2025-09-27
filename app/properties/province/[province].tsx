@@ -1,10 +1,18 @@
 import React, { useEffect, useState, useCallback } from 'react'
+
 import { View, Text, ScrollView, Image, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native'
+
 import { SafeAreaView } from 'react-native-safe-area-context'
+
 import { LinearGradient } from 'expo-linear-gradient'
+
 import { useLocalSearchParams, useRouter } from 'expo-router'
+
 import { fetchProperties } from '@/config/lib/FetchProperties'
+
 import { useTheme } from '@/context/ThemeProvider'
+
+import { Ionicons } from '@expo/vector-icons'
 
 export default function ProvincePage() {
     const { province } = useLocalSearchParams<{ province: string }>()
@@ -198,8 +206,8 @@ export default function ProvincePage() {
                                             </View>
 
                                             <View className='flex-row items-center'>
-                                                <Text className='text-zinc-300 text-sm'>📍</Text>
-                                                <Text className='text-zinc-300 text-sm ml-1' numberOfLines={1}>
+                                                <Ionicons name="location" size={14} color="#d4d4d8" style={{ marginRight: 4 }} />
+                                                <Text className='text-zinc-300 text-sm' numberOfLines={1}>
                                                     {property.city}, {property.province}
                                                 </Text>
                                             </View>
@@ -241,7 +249,7 @@ export default function ProvincePage() {
                     {properties.length === 0 && (
                         <View className='bg-zinc-900/80 rounded-3xl p-8 border border-zinc-800/50 items-center justify-center mt-8'>
                             <View className='w-16 h-16 bg-zinc-800 rounded-full items-center justify-center mb-4'>
-                                <Text className='text-2xl'>🏠</Text>
+                                <Ionicons name="home" size={32} color="#a1a1aa" />
                             </View>
                             <Text className='text-white text-lg font-semibold mb-2'>Tidak Ada Properti</Text>
                             <Text className='text-zinc-400 text-center'>

@@ -12,44 +12,44 @@ module.exports = {
     extend: {
       colors: {
         // Background colors
-        background: "#18181b",
-        card: "#18181b",
-        "card-border": "#27272a",
+        background: "var(--background)",
+        card: "var(--card)",
+        "card-border": "var(--card-border)",
 
         // Text colors
-        "text-primary": "#ffffff",
-        "text-secondary": "#a1a1aa",
-        "text-tertiary": "#71717a",
-        "text-muted": "#d4d4d8",
-        "text-placeholder": "#6b7280",
-        "text-error": "#f87171",
+        primary: "var(--text-primary)",
+        secondary: "var(--text-secondary)",
+        tertiary: "var(--text-tertiary)",
+        muted: "var(--text-muted)",
+        placeholder: "var(--text-placeholder)",
+        error: "var(--text-error)",
 
         // Accent colors
         accent: {
           blue: {
-            400: "#60a5fa",
-            500: "#3b82f6",
-            600: "#2563eb",
+            400: "var(--accent-blue-400)",
+            500: "var(--accent-blue-500)",
+            600: "var(--accent-blue-600)",
           },
         },
 
         // Interactive elements
-        "interactive-search": "#a1a1aa",
-        "interactive-settings": "#ffffff",
-        "interactive-bookmark": "#3b82f6",
+        "interactive-search": "var(--interactive-search)",
+        "interactive-settings": "var(--interactive-settings)",
+        "interactive-bookmark": "var(--interactive-bookmark)",
 
         // Status colors
-        "status-error": "#f87171",
-        "status-success": "#4ade80",
-        "status-warning": "#fbbf24",
+        "status-error": "var(--status-error)",
+        "status-success": "var(--status-success)",
+        "status-warning": "var(--status-warning)",
 
-        // Border colors
-        "border-primary": "#27272a",
-        "border-secondary": "#3f3f46",
+        // Border colors (use static gray values for native)
+        "border-primary": "#e5e7eb", // ~gray-200/300
+        "border-secondary": "#d1d5db", // ~gray-300
 
         // Chip colors
-        "chip-active": "#2563eb",
-        "chip-inactive": "#18181b",
+        "chip-active": "var(--chip-active)",
+        "chip-inactive": "var(--chip-inactive)",
       },
     },
   },
